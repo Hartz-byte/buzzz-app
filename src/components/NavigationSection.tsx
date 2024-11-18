@@ -12,7 +12,15 @@ const NavigationSection = ({
   const navigate = useNavigate();
 
   // Function to handle log out
-  const handleLogout = async () => {};
+  const handleLogout = async () => {
+    localStorage.removeItem("token");
+    localStorage.removeItem("user");
+
+    // Redirect to login page on success
+    navigate("/login");
+
+    console.log("User logged out");
+  };
 
   // Handle tab change
   const handleTabChange = (tab: string) => {
