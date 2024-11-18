@@ -1,7 +1,19 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { useMutation } from "@apollo/client";
+import gql from "graphql-tag";
 
 import Logo from "../assets/logo/Buzzz-Logo.jpg";
+
+// GraphQL mutation for sign-up
+const SIGNUP_MUTATION = gql`
+  mutation Signup($name: String!, $email: String!, $password: String!) {
+    signup(name: $name, email: $email, password: $password) {
+      token
+      message
+    }
+  }
+`;
 
 const Signup: React.FC = () => {
   const navigate = useNavigate();
@@ -12,7 +24,37 @@ const Signup: React.FC = () => {
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
 
-  const handleSignup = async () => {};
+  // Using Apollo's useMutation hook
+  const [signupMutation] = useMutation(SIGNUP_MUTATION);
+
+  const handleSignup = async (e: React.FormEvent) => {
+    e.preventDefault();
+
+    setLoading(true);
+    setError("");
+
+    try {
+      const { data } = await signupMutation({
+        variables: {
+          name,
+          email,
+          password,
+        },
+      });
+
+      if (data.signup.token) {
+        // On success store the token and navigate
+        localStorage.setItem("authToken", data.signup.token);
+        navigate("/login");
+
+        console.log("User signed up successfully");
+      }
+    } catch (err) {
+      setError("Sign up failed. Please try again.");
+    } finally {
+      setLoading(false);
+    }
+  };
 
   return (
     <div className="min-h-screen flex flex-col md:flex-row bg-[#1a1a1a]">

@@ -1,7 +1,22 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { gql, useMutation } from "@apollo/client";
 
 import Logo from "../assets/logo/Buzzz-Logo.jpg";
+
+// GraphQL Mutation for login
+const LOGIN_MUTATION = gql`
+  mutation Login($email: String!, $password: String!) {
+    login(email: $email, password: $password) {
+      token
+      user {
+        id
+        name
+        email
+      }
+    }
+  }
+`;
 
 const Login: React.FC = () => {
   const navigate = useNavigate();
@@ -11,7 +26,37 @@ const Login: React.FC = () => {
   const [error, setError] = useState("");
   const [focusedField, setFocusedField] = useState<string | null>(null);
 
-  const handleLogin = async () => {};
+  const [login, { loading }] = useMutation(LOGIN_MUTATION, {
+    onCompleted: (data) => {
+      const { token, user } = data.login;
+      localStorage.setItem("token", token);
+      localStorage.setItem("user", JSON.stringify(user));
+
+      navigate("/home");
+    },
+    onError: (err) => {
+      console.error("Login error:", err);
+      setError("Invalid email or password");
+    },
+  });
+
+  const handleLogin = async (e: React.FormEvent) => {
+    e.preventDefault();
+
+    // Check if both email and password are provided
+    if (!email || !password) {
+      setError("Please enter both email and password");
+      return;
+    }
+
+    try {
+      await login({
+        variables: { email, password },
+      });
+    } catch (err) {
+      console.log("Error during login:", err);
+    }
+  };
 
   return (
     <div className="min-h-screen flex flex-col md:flex-row bg-[#1a1a1a]">
@@ -88,8 +133,9 @@ const Login: React.FC = () => {
           <button
             type="submit"
             className="w-full py-2 rounded bg-[#6E54B5] text-white hover:bg-[#5A4793]"
+            disabled={loading}
           >
-            Login
+            {loading ? "Logging In..." : "Login"}
           </button>
 
           {/* Sign Up Link */}
