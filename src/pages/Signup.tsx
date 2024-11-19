@@ -24,7 +24,6 @@ const Signup: React.FC = () => {
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
 
-  // Using Apollo's useMutation hook
   const [signupMutation] = useMutation(SIGNUP_MUTATION);
 
   const handleSignup = async (e: React.FormEvent) => {
@@ -43,11 +42,10 @@ const Signup: React.FC = () => {
       });
 
       if (data.signup.token) {
-        // On success store the token and navigate
         localStorage.setItem("authToken", data.signup.token);
-        navigate("/login");
+        navigate("/login"); // After successful signup, navigate to the login page
 
-        console.log("User signed up successfully");
+        console.log("User signed up and profile created.");
       }
     } catch (err) {
       setError("Sign up failed. Please try again.");
@@ -76,7 +74,6 @@ const Signup: React.FC = () => {
       {/* Right Half */}
       <div className="w-full md:w-1/2 flex justify-center items-center p-4">
         <form onSubmit={handleSignup} className="w-full max-w-sm space-y-4">
-          {/* Sign Up Title */}
           <h2 className="text-xl font-bold text-white mb-4 text-center">
             Sign Up
           </h2>
