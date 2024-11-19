@@ -3,11 +3,19 @@ import { gql, useQuery } from "@apollo/client";
 import CoverPic from "../assets/images/CoverPic.jpg";
 import ProfilePic from "../assets/images/ProfilePic.jpg";
 
-// GraphQL query to fetch the current user
+// GraphQL query to fetch the current user and their followers/following
 const GET_CURRENT_USER = gql`
   query GetCurrentUser {
     currentUser {
       name
+      followers {
+        id
+        name
+      }
+      following {
+        id
+        name
+      }
     }
   }
 `;
@@ -25,6 +33,8 @@ const ProfileSection: React.FC = () => {
   }
 
   const userName = data?.currentUser?.name || "User";
+  const followersCount = data?.currentUser?.followers.length || 0;
+  const followingCount = data?.currentUser?.following.length || 0;
 
   return (
     <div className="w-[20%] flex flex-col items-center bg-[#2a2a2a] rounded-xl">
@@ -53,11 +63,11 @@ const ProfileSection: React.FC = () => {
       <div className="flex mt-5 text-white">
         <div className="flex flex-col items-center mx-4">
           <p className="text-lg font-semibold">Followers</p>
-          <p className="text-xl">0</p>
+          <p className="text-xl">{followersCount}</p>
         </div>
         <div className="flex flex-col items-center mx-4">
           <p className="text-lg font-semibold">Following</p>
-          <p className="text-xl">0</p>
+          <p className="text-xl">{followingCount}</p>
         </div>
       </div>
 
