@@ -1,10 +1,11 @@
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
+import ProtectedRoute from "./ProtectedRoute";
 
 import SplashScreen from "../pages/SplashScreen";
 import Login from "../pages/Login";
 import Signup from "../pages/Signup";
 import Home from "../pages/Home";
-import InfoCollection from "../pages/InfoCollection";
+// import InfoCollection from "../pages/InfoCollection";
 
 const Navigation = () => {
   return (
@@ -13,8 +14,11 @@ const Navigation = () => {
         <Route path="/" element={<SplashScreen />} />
         <Route path="/login" element={<Login />} />
         <Route path="/signup" element={<Signup />} />
-        {/* <Route path="/information" element={<InfoCollection />} /> */}
-        <Route path="/Home" element={<Home />} />
+
+        {/* Protected routes */}
+        <Route element={<ProtectedRoute />}>
+          <Route path="/Home" element={<Home />} />
+        </Route>
       </Routes>
     </Router>
   );

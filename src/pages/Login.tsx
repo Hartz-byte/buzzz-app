@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { gql, useMutation } from "@apollo/client";
+import { useAuth } from "../navigation/AuthContext";
 
 import Logo from "../assets/logo/Buzzz-Logo.jpg";
 
@@ -20,6 +21,7 @@ const LOGIN_MUTATION = gql`
 
 const Login: React.FC = () => {
   const navigate = useNavigate();
+  const { login: authLogin } = useAuth();
 
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -29,10 +31,11 @@ const Login: React.FC = () => {
   const [login, { loading }] = useMutation(LOGIN_MUTATION, {
     onCompleted: (data) => {
       const { token, user } = data.login;
-      localStorage.setItem("token", token);
+      authLogin(token);
       localStorage.setItem("user", JSON.stringify(user));
 
       navigate("/home");
+      console.log("User logged in successfully");
     },
     onError: (err) => {
       console.error("Login error:", err);
