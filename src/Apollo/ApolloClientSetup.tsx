@@ -18,11 +18,7 @@ const httpLink = createHttpLink({
   uri: "http://localhost:3000/graphql",
 });
 
-console.log("Retrieved token from localStorage:", token);
-
 const authLink = new ApolloLink((operation, forward) => {
-  console.log("Current token in authLink:", token);
-
   operation.setContext({
     headers: {
       Authorization: token ? `Bearer ${token}` : "",

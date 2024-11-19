@@ -111,8 +111,11 @@ const AllUsersSection = () => {
       <p className="text-white text-xl mb-4">All Users</p>
       <div className="flex flex-col space-y-4">
         {filteredUsers.map((user: any) => (
-          <div className="flex items-center bg-[#242424] p-2 pl-4 pr-4 rounded-xl cursor-pointer hover:bg-[#1e1e1e]">
-            <div key={user.id} className="flex items-center space-x-4">
+          <div
+            key={user.id}
+            className="flex items-center bg-[#242424] p-2 pl-4 pr-4 rounded-xl cursor-pointer hover:bg-[#1e1e1e]"
+          >
+            <div className="flex items-center space-x-4">
               <div className="flex flex-col items-center">
                 <p className="text-white text-sm">{user.name}</p>
                 <p className="text-gray-400 text-xs">{user.email}</p>
