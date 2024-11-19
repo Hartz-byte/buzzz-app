@@ -1,38 +1,35 @@
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { useAuth } from "../navigation/AuthContext";
 
 import Logo from "../assets/logo/Buzzz.jpg";
 
 const SplashScreen: React.FC = () => {
   const navigate = useNavigate();
+  const { isAuthenticated } = useAuth();
+
   const [showMainText, setShowMainText] = useState(false);
   const [showSubText, setShowSubText] = useState(false);
 
   useEffect(() => {
-    // Check if the user is authenticated
-    const checkAuthStatus = async () => {
-      const token = localStorage.getItem("token");
-      if (token) {
+    const mainTextTimeout = setTimeout(() => setShowMainText(true), 1000);
+    const subTextTimeout = setTimeout(() => setShowSubText(true), 2000);
+
+    // Check auth status
+    const authTimeout = setTimeout(() => {
+      if (isAuthenticated) {
         navigate("/home");
       } else {
         navigate("/login");
       }
-    };
-
-    // Call checkAuthStatus after a short delay
-    const authTimeout = setTimeout(checkAuthStatus, 5000);
-
-    // Show main text after the logo animation
-    const mainTextTimeout = setTimeout(() => setShowMainText(true), 1000);
-    // Show subtext after the main text animation
-    const subTextTimeout = setTimeout(() => setShowSubText(true), 2000);
+    }, 5000);
 
     return () => {
-      clearTimeout(authTimeout);
       clearTimeout(mainTextTimeout);
       clearTimeout(subTextTimeout);
+      clearTimeout(authTimeout);
     };
-  }, [navigate]);
+  }, [navigate, isAuthenticated]);
 
   return (
     <div className="flex items-center justify-center min-h-screen bg-[#1a1a1a]">

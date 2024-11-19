@@ -31,10 +31,17 @@ const Login: React.FC = () => {
   const [login, { loading }] = useMutation(LOGIN_MUTATION, {
     onCompleted: (data) => {
       const { token, user } = data.login;
-      authLogin(token);
+
+      localStorage.setItem("auth_token", token);
+
       localStorage.setItem("user", JSON.stringify(user));
 
+      // Call the auth login function
+      authLogin(token);
+
+      // Navigate on success
       navigate("/home");
+
       console.log("User logged in successfully");
     },
     onError: (err) => {
@@ -43,10 +50,10 @@ const Login: React.FC = () => {
     },
   });
 
+  // Function to handle login
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
 
-    // Check if both email and password are provided
     if (!email || !password) {
       setError("Please enter both email and password");
       return;

@@ -1,13 +1,36 @@
-import React, { ReactNode } from "react";
-import { ApolloClient, InMemoryCache, ApolloProvider } from "@apollo/client";
+import {
+  ApolloClient,
+  InMemoryCache,
+  ApolloProvider,
+  createHttpLink,
+  ApolloLink,
+} from "@apollo/client";
+import { ReactNode } from "react";
 
 // Define the props type to include children
 interface ApolloClientSetupProps {
   children: ReactNode;
 }
 
-const client = new ApolloClient({
+const token = localStorage.getItem("auth_token");
+
+const httpLink = createHttpLink({
   uri: "http://localhost:3000/graphql",
+});
+
+console.log("Retrieved token from localStorage:", token);
+
+const authLink = new ApolloLink((operation, forward) => {
+  operation.setContext({
+    headers: {
+      Authorization: token ? `Bearer ${token}` : "",
+    },
+  });
+  return forward(operation);
+});
+
+const client = new ApolloClient({
+  link: ApolloLink.from([authLink, httpLink]),
   cache: new InMemoryCache(),
 });
 

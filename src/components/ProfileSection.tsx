@@ -1,9 +1,31 @@
-import React, { useState, useEffect } from "react";
-
+import React from "react";
+import { gql, useQuery } from "@apollo/client";
 import CoverPic from "../assets/images/CoverPic.jpg";
 import ProfilePic from "../assets/images/ProfilePic.jpg";
 
+// GraphQL query to fetch the current user
+const GET_CURRENT_USER = gql`
+  query GetCurrentUser {
+    currentUser {
+      name
+    }
+  }
+`;
+
 const ProfileSection: React.FC = () => {
+  const { data, loading, error } = useQuery(GET_CURRENT_USER);
+
+  if (loading) {
+    return <p className="text-white text-center">Loading...</p>;
+  }
+
+  if (error) {
+    console.error("Error fetching user data:", error);
+    return <p className="text-red-500 text-center">Error loading profile</p>;
+  }
+
+  const userName = data?.currentUser?.name || "User";
+
   return (
     <div className="w-[20%] flex flex-col items-center bg-[#2a2a2a] rounded-xl">
       {/* Cover and Profile Picture */}
@@ -22,7 +44,7 @@ const ProfileSection: React.FC = () => {
 
       {/* User Info */}
       <div className="text-center text-white">
-        <p className="text-xl font-semibold">Harsh Gupta</p>
+        <p className="text-xl font-semibold">{userName}</p>
         <p className="text-md text-gray-400">@hrsh_line_up</p>
         <p className="text-sm text-gray-500 mt-5">Believe in yourself</p>
       </div>
@@ -31,11 +53,11 @@ const ProfileSection: React.FC = () => {
       <div className="flex mt-5 text-white">
         <div className="flex flex-col items-center mx-4">
           <p className="text-lg font-semibold">Followers</p>
-          <p className="text-xl">150</p>
+          <p className="text-xl">0</p>
         </div>
         <div className="flex flex-col items-center mx-4">
           <p className="text-lg font-semibold">Following</p>
-          <p className="text-xl">120</p>
+          <p className="text-xl">0</p>
         </div>
       </div>
 
