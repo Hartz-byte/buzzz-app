@@ -24,8 +24,10 @@ const Home = () => {
         <ProfileSection />
 
         {/* Conditionally render based on activeSection */}
-        {activeSection === "home" && <NewsFeedSection />}
-        {activeSection === "explore" && <ExploreSection />}
+        <div className="flex-1 overflow-y-auto max-h-[calc(100vh-200px)] scrollbar-hidden">
+          {activeSection === "home" && <NewsFeedSection />}
+          {activeSection === "explore" && <ExploreSection />}
+        </div>
 
         <AllUsersSection />
       </div>

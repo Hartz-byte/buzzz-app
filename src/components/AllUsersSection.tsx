@@ -109,35 +109,35 @@ const AllUsersSection = () => {
   return (
     <div className="w-[20%] flex flex-col items-center justify-center bg-[#2a2a2a] rounded-xl">
       <p className="text-white text-xl mb-4">All Users</p>
-      <div className="flex flex-col space-y-4">
+      <div className="flex flex-col items-center space-y-4 w-full">
         {filteredUsers.map((user: any) => (
           <div
             key={user.id}
-            className="flex items-center bg-[#242424] p-2 pl-4 pr-4 rounded-xl cursor-pointer hover:bg-[#1e1e1e]"
+            className="flex items-center bg-[#242424] p-2 pl-4 pr-4 rounded-xl cursor-pointer hover:bg-[#1e1e1e] w-[90%]"
           >
-            <div className="flex items-center space-x-4">
-              <div className="flex flex-col items-center">
-                <p className="text-white text-sm">{user.name}</p>
-                <p className="text-gray-400 text-xs">{user.email}</p>
-              </div>
+            {/* User details section */}
+            <div className="flex flex-col justify-between flex-grow">
+              <p className="text-white text-sm">{user.name}</p>
+              <p className="text-gray-400 text-xs">{user.email}</p>
+            </div>
 
-              <div>
-                {followedUsers.has(user.id) ? (
-                  <button
-                    onClick={() => handleUnfollow(user.id)}
-                    className="bg-red-500 text-white py-1 px-4 rounded-full"
-                  >
-                    Unfollow
-                  </button>
-                ) : (
-                  <button
-                    onClick={() => handleFollow(user.id)}
-                    className="bg-blue-500 text-white py-1 px-7 rounded-full"
-                  >
-                    Follow
-                  </button>
-                )}
-              </div>
+            {/* Follow/Unfollow button container */}
+            <div className="flex-shrink-0">
+              {followedUsers.has(user.id) ? (
+                <button
+                  onClick={() => handleUnfollow(user.id)}
+                  className="bg-red-500 text-white py-1 px-4 rounded-full"
+                >
+                  Unfollow
+                </button>
+              ) : (
+                <button
+                  onClick={() => handleFollow(user.id)}
+                  className="bg-blue-500 text-white py-1 px-7 rounded-full"
+                >
+                  Follow
+                </button>
+              )}
             </div>
           </div>
         ))}

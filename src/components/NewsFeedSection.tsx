@@ -138,7 +138,7 @@ const NewsFeedSection = () => {
   };
 
   return (
-    <div className="w-[60%] flex flex-col items-center">
+    <div className="w-[100%] flex flex-col items-center">
       {/* Container */}
       <div className="w-full bg-[#2a2a2a] p-4 rounded-xl flex flex-col">
         {/* Profile Pic and Input Field */}
