@@ -140,7 +140,7 @@ const NewsFeedSection = () => {
   const handleTagClick = (userId: string, userName: string) => {
     setTags((prevTags) => [...prevTags, userName]);
 
-    console.log(`User ${userName} tagged successfully`);
+    console.log(`User ${userName} id ${userId} tagged successfully`);
 
     setTagSearch("");
   };

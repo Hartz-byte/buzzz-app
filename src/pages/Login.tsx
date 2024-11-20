@@ -37,7 +37,7 @@ const Login: React.FC = () => {
       localStorage.setItem("user", JSON.stringify(user));
 
       // Call the auth login function
-      authLogin(token);
+      authLogin(token, user.id);
 
       // Navigate on success
       navigate("/home");
