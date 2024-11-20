@@ -4,8 +4,10 @@ import { useMutation, useQuery } from "@apollo/client";
 import { gql } from "@apollo/client";
 import { useAuth } from "../navigation/AuthContext";
 import axios from "axios";
+import { jwtDecode } from "jwt-decode";
 
-export const GET_USER_POSTS = gql`
+// GraphQL queries
+const GET_USER_POSTS = gql`
   query GetUserPosts($userId: String!) {
     posts(userId: $userId) {
       text
@@ -15,7 +17,7 @@ export const GET_USER_POSTS = gql`
   }
 `;
 
-export const CREATE_POST = gql`
+const CREATE_POST = gql`
   mutation CreatePost($text: String, $imageUrl: String) {
     createPost(text: $text, imageUrl: $imageUrl) {
       text
@@ -30,23 +32,53 @@ const NewsFeedSection = () => {
   const [imageUrl, setImageUrl] = useState<string>("");
   const [imageFile, setImageFile] = useState<File | null>(null);
   const [posts, setPosts] = useState<any[]>([]);
+  const [userId, setUserId] = useState<string | null>("");
 
-  const { userId } = useAuth();
+  // Get userId from AuthContext (use it as fallback, if needed)
+  const { userId: authUserId } = useAuth();
+
+  // Extract userId from token if not available from context
+  useEffect(() => {
+    const storedToken = localStorage.getItem("token");
+
+    if (storedToken) {
+      try {
+        const decodedToken: any = jwtDecode(storedToken);
+        setUserId(decodedToken.id);
+        console.log("decoded token: ", decodedToken);
+
+        console.log("decoded userid: ", decodedToken.id);
+      } catch (error) {
+        console.error("Error decoding token", error);
+      }
+    }
+  }, []);
+
+  // Ensure userId is available before making the query
   const {
     data: postsData,
     loading: postsLoading,
     error: postsError,
   } = useQuery(GET_USER_POSTS, {
-    variables: { userId },
+    variables: { userId: userId || authUserId },
+    skip: !userId,
   });
 
   const [createPostMutation] = useMutation(CREATE_POST);
 
   useEffect(() => {
     if (postsData) {
-      setPosts(postsData.posts || []);
+      setPosts(postsData.posts);
+
+      console.log("postsData: ", postsData);
     }
   }, [postsData]);
+
+  useEffect(() => {
+    if (userId || authUserId) {
+      console.log("userId from token or context:", userId || authUserId);
+    }
+  }, [userId, authUserId]);
 
   // Upload the image to Cloudinary and get the URL
   const uploadImageToCloudinary = async (file: File) => {
@@ -174,7 +206,12 @@ const NewsFeedSection = () => {
         {postsLoading ? (
           <p className="text-white">Loading...</p>
         ) : postsError ? (
-          <p className="text-white">Error loading posts</p>
+          <div>
+            <p className="text-white">Error loading posts</p>
+            <pre className="text-white">
+              {JSON.stringify(postsError, null, 2)}
+            </pre>
+          </div>
         ) : (
           posts.map((post, index) => (
             <div key={index} className="bg-[#2a2a2a] p-4 mb-4 rounded-xl">
@@ -186,7 +223,6 @@ const NewsFeedSection = () => {
                   className="mt-2 w-full h-56 object-cover rounded-xl"
                 />
               )}
-              <p className="text-[#B39757] mt-2 text-sm">{post.createdAt}</p>
             </div>
           ))
         )}
