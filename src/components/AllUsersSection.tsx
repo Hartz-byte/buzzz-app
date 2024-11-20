@@ -1,5 +1,5 @@
 import { useQuery, useMutation, gql } from "@apollo/client";
-import { useState, useEffect } from "react";
+import { useState } from "react";
 
 // GraphQL queries and mutations
 const GET_ALL_USERS = gql`
@@ -60,26 +60,6 @@ const AllUsersSection = () => {
   // State for the followed users to update UI dynamically
   const [followedUsers, setFollowedUsers] = useState<Set<string>>(new Set());
 
-  // Load followed users from localStorage on component mount
-  useEffect(() => {
-    const storedFollowedUsers = localStorage.getItem("followedUsers");
-    if (storedFollowedUsers) {
-      setFollowedUsers(new Set(JSON.parse(storedFollowedUsers)));
-    }
-  }, []);
-
-  // Save followed users to localStorage whenever it changes
-  useEffect(() => {
-    if (followedUsers.size > 0) {
-      localStorage.setItem(
-        "followedUsers",
-        JSON.stringify(Array.from(followedUsers))
-      );
-    } else {
-      localStorage.removeItem("followedUsers"); // Remove the followedUsers from localStorage if none
-    }
-  }, [followedUsers]);
-
   if (loadingUsers || loadingCurrentUser) return <p>Loading...</p>;
 
   if (errorUsers) return <p>Error fetching users: {errorUsers.message}</p>;
@@ -114,7 +94,6 @@ const AllUsersSection = () => {
       const { data } = await unfollowUser({
         variables: { targetUserId: userId },
       });
-
       if (data?.unfollowUser) {
         setFollowedUsers((prev) => {
           const newFollowedUsers = new Set(prev);
