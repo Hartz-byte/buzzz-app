@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import ProfilePic from "../assets/images/ProfilePic.jpg";
-import { useMutation, useQuery } from "@apollo/client";
+import { useLazyQuery, useMutation, useQuery } from "@apollo/client";
 import { gql } from "@apollo/client";
 import { useAuth } from "../navigation/AuthContext";
 import axios from "axios";
@@ -21,23 +21,53 @@ const GET_USER_POSTS = gql`
 `;
 
 const CREATE_POST = gql`
-  mutation CreatePost($text: String, $imageUrl: String) {
-    createPost(text: $text, imageUrl: $imageUrl) {
+  mutation CreatePost($text: String, $imageUrl: String, $tags: [String]) {
+    createPost(text: $text, imageUrl: $imageUrl, tags: $tags) {
       text
       imageUrl
       createdAt
+      tags {
+        id
+        name
+      }
+    }
+  }
+`;
+
+const SEARCH_USERS = gql`
+  query SearchUsers($searchTerm: String!) {
+    searchUsers(searchTerm: $searchTerm) {
+      id
+      name
+      email
     }
   }
 `;
 
 const NewsFeedSection = () => {
   const [text, setText] = useState<string>("");
-  const [imageUrl, setImageUrl] = useState<string>(""); // For the preview
-  const [imageFile, setImageFile] = useState<File | null>(null); // For the file
+  const [imageUrl, setImageUrl] = useState<string>("");
+  const [imageFile, setImageFile] = useState<File | null>(null);
   const [posts, setPosts] = useState<any[]>([]);
   const [userId, setUserId] = useState<string | null>("");
+  const [tags, setTags] = useState<string[]>([]);
+  const [tagSearch, setTagSearch] = useState<string>("");
 
   const { userId: authUserId } = useAuth();
+
+  const {
+    data: postsData,
+    loading: postsLoading,
+    error: postsError,
+  } = useQuery(GET_USER_POSTS, {
+    variables: { userId: userId || authUserId },
+    skip: !userId,
+  });
+
+  const [createPostMutation] = useMutation(CREATE_POST);
+
+  const [searchUsers, { data: searchResults, loading: searchLoading }] =
+    useLazyQuery(SEARCH_USERS);
 
   useEffect(() => {
     const storedToken = localStorage.getItem("token");
@@ -52,22 +82,17 @@ const NewsFeedSection = () => {
     }
   }, []);
 
-  const {
-    data: postsData,
-    loading: postsLoading,
-    error: postsError,
-  } = useQuery(GET_USER_POSTS, {
-    variables: { userId: userId || authUserId },
-    skip: !userId,
-  });
-
-  const [createPostMutation] = useMutation(CREATE_POST);
-
   useEffect(() => {
     if (postsData) {
       setPosts(postsData.posts);
     }
   }, [postsData]);
+
+  useEffect(() => {
+    if (tagSearch.trim()) {
+      searchUsers({ variables: { searchTerm: tagSearch } });
+    }
+  }, [tagSearch, searchUsers]);
 
   const uploadImageToCloudinary = async (file: File) => {
     const formData = new FormData();
@@ -87,6 +112,11 @@ const NewsFeedSection = () => {
   };
 
   const handleCreatePost = async () => {
+    if (!text.trim()) {
+      alert("Post cannot be empty.");
+      return;
+    }
+
     try {
       let uploadedImageUrl = imageUrl;
 
@@ -95,22 +125,31 @@ const NewsFeedSection = () => {
       }
 
       await createPostMutation({
-        variables: { text, imageUrl: uploadedImageUrl },
+        variables: { text, imageUrl: uploadedImageUrl, tags },
       });
 
       setText("");
       setImageUrl("");
       setImageFile(null);
+      setTags([]);
     } catch (error) {
       console.error("Error creating post:", error);
     }
+  };
+
+  const handleTagClick = (userId: string, userName: string) => {
+    setTags((prevTags) => [...prevTags, userName]);
+
+    console.log(`User ${userName} tagged successfully`);
+
+    setTagSearch("");
   };
 
   const handleImageUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
     if (file) {
       setImageFile(file);
-      setImageUrl(URL.createObjectURL(file)); // Display the image preview
+      setImageUrl(URL.createObjectURL(file));
     }
   };
 
@@ -122,6 +161,7 @@ const NewsFeedSection = () => {
   return (
     <div className="w-[100%] flex flex-col items-center">
       <div className="w-full bg-[#2a2a2a] p-4 rounded-xl flex flex-col">
+        {/* Top container */}
         <div className="flex items-center mb-4">
           <img
             src={ProfilePic}
@@ -143,6 +183,36 @@ const NewsFeedSection = () => {
           </button>
         </div>
 
+        {/* Tagging UI */}
+        <div className="mb-4">
+          {/* Render tag input field only if text is not empty */}
+          {text.trim() && (
+            <>
+              <input
+                type="text"
+                placeholder="Tag people..."
+                value={tagSearch}
+                onChange={(e) => setTagSearch(e.target.value)}
+                className="flex-1 h-12 bg-[#242424] text-white p-2 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#B39757] mr-2"
+              />
+              {tagSearch && searchResults?.searchUsers?.length > 0 && (
+                <div className="bg-[#1e1e1e] rounded-xl mt-2 p-2 max-h-48 overflow-y-auto">
+                  {searchResults.searchUsers.map((user: any) => (
+                    <div
+                      key={user.id}
+                      className="flex items-center p-2 cursor-pointer hover:bg-[#3a3a3a]"
+                      onClick={() => handleTagClick(user.id, user.name)}
+                    >
+                      <p className="text-white">{user.name}</p>
+                    </div>
+                  ))}
+                </div>
+              )}
+              {searchLoading && <p className="text-white">Searching...</p>}
+            </>
+          )}
+        </div>
+
         {/* Image Preview Section */}
         {imageUrl && (
           <div className="relative mb-4">
@@ -160,7 +230,22 @@ const NewsFeedSection = () => {
           </div>
         )}
 
+        {/* Displaying tags */}
+        <div className="mt-4 flex flex-wrap space-x-2">
+          {tags.length > 0 &&
+            tags.map((tagName) => (
+              <span
+                key={tagName}
+                className="bg-[#B39757] text-white rounded-xl px-4 py-1 mb-5"
+              >
+                {tagName}
+              </span>
+            ))}
+        </div>
+
+        {/* Icons */}
         <div className="flex justify-between ml-16 mr-14">
+          {/* Gallery */}
           <div className="flex items-center bg-[#242424] p-2 pl-4 pr-4 rounded-xl cursor-pointer hover:bg-[#1e1e1e] relative">
             <span className="material-icons text-[#20D997] mr-2">photo</span>
             <p className="text-white">Gallery</p>
@@ -194,6 +279,7 @@ const NewsFeedSection = () => {
         </div>
       </div>
 
+      {/* Posts render */}
       <div className="mt-5 w-full p-4 rounded-xl flex flex-col">
         {postsLoading ? (
           <p className="text-white">Loading...</p>

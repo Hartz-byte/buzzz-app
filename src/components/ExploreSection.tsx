@@ -9,7 +9,7 @@ const ExploreSection = () => {
   };
 
   return (
-    <div className="w-[60%] flex flex-col items-center">
+    <div className="w-[100%] flex flex-col items-center">
       {/* Container */}
       <div className="w-full bg-[#2a2a2a] p-4 rounded-xl flex justify-center">
         {/* Search Input Field */}
@@ -18,7 +18,7 @@ const ExploreSection = () => {
             type="text"
             value={searchText}
             onChange={(e) => setSearchText(e.target.value)}
-            placeholder="Search"
+            placeholder="Search..."
             className="w-full h-12 bg-[#242424] text-white p-4 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#B39757] pr-12"
           />
 
