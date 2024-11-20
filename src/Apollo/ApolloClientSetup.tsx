@@ -15,9 +15,9 @@ interface ApolloClientSetupProps {
 const token = localStorage.getItem("auth_token");
 
 const httpLink = createHttpLink({
-  uri: "https://buzzz-server-qkdn.onrender.com/graphql",
+  // uri: "https://buzzz-server-qkdn.onrender.com/graphql",
   // uri: "https://buzzz-server.vercel.app/graphql",
-  // uri: "http://localhost:3000/graphql",
+  uri: "http://localhost:3000/graphql",
   credentials: "include",
 });
 
