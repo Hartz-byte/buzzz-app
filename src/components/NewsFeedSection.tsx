@@ -32,15 +32,13 @@ const CREATE_POST = gql`
 
 const NewsFeedSection = () => {
   const [text, setText] = useState<string>("");
-  const [imageUrl, setImageUrl] = useState<string>("");
-  const [imageFile, setImageFile] = useState<File | null>(null);
+  const [imageUrl, setImageUrl] = useState<string>(""); // For the preview
+  const [imageFile, setImageFile] = useState<File | null>(null); // For the file
   const [posts, setPosts] = useState<any[]>([]);
   const [userId, setUserId] = useState<string | null>("");
 
-  // Get userId from AuthContext (use it as fallback, if needed)
   const { userId: authUserId } = useAuth();
 
-  // Extract userId from token if not available from context
   useEffect(() => {
     const storedToken = localStorage.getItem("token");
 
@@ -48,16 +46,12 @@ const NewsFeedSection = () => {
       try {
         const decodedToken: any = jwtDecode(storedToken);
         setUserId(decodedToken.id);
-        console.log("decoded token: ", decodedToken);
-
-        console.log("decoded userid: ", decodedToken.id);
       } catch (error) {
         console.error("Error decoding token", error);
       }
     }
   }, []);
 
-  // Ensure userId is available before making the query
   const {
     data: postsData,
     loading: postsLoading,
@@ -72,18 +66,9 @@ const NewsFeedSection = () => {
   useEffect(() => {
     if (postsData) {
       setPosts(postsData.posts);
-
-      console.log("postsData: ", postsData);
     }
   }, [postsData]);
 
-  useEffect(() => {
-    if (userId || authUserId) {
-      console.log("userId from token or context:", userId || authUserId);
-    }
-  }, [userId, authUserId]);
-
-  // Upload the image to Cloudinary and get the URL
   const uploadImageToCloudinary = async (file: File) => {
     const formData = new FormData();
     formData.append("file", file);
@@ -94,9 +79,6 @@ const NewsFeedSection = () => {
         `https://api.cloudinary.com/v1_1/dsxdbnx7u/image/upload`,
         formData
       );
-
-      console.log("image upload success");
-
       return response.data.secure_url;
     } catch (error) {
       console.error("Error uploading image to Cloudinary", error);
@@ -109,18 +91,13 @@ const NewsFeedSection = () => {
       let uploadedImageUrl = imageUrl;
 
       if (imageFile) {
-        // Upload the image to Cloudinary and get the URL
         uploadedImageUrl = await uploadImageToCloudinary(imageFile);
       }
 
-      // Create the post with or without an image
       await createPostMutation({
         variables: { text, imageUrl: uploadedImageUrl },
       });
 
-      console.log("Post created");
-
-      // Reset states
       setText("");
       setImageUrl("");
       setImageFile(null);
@@ -133,24 +110,24 @@ const NewsFeedSection = () => {
     const file = event.target.files?.[0];
     if (file) {
       setImageFile(file);
-      setImageUrl(URL.createObjectURL(file));
+      setImageUrl(URL.createObjectURL(file)); // Display the image preview
     }
+  };
+
+  const handleRemoveImage = () => {
+    setImageFile(null);
+    setImageUrl("");
   };
 
   return (
     <div className="w-[100%] flex flex-col items-center">
-      {/* Container */}
       <div className="w-full bg-[#2a2a2a] p-4 rounded-xl flex flex-col">
-        {/* Profile Pic and Input Field */}
         <div className="flex items-center mb-4">
-          {/* Profile Pic */}
           <img
             src={ProfilePic}
             alt="Profile"
             className="w-12 h-12 object-cover rounded-full mr-4"
           />
-
-          {/* Input Field */}
           <input
             type="text"
             placeholder="Tell your friends about your thoughts..."
@@ -158,8 +135,6 @@ const NewsFeedSection = () => {
             value={text}
             onChange={(e) => setText(e.target.value)}
           />
-
-          {/* Send Button */}
           <button
             onClick={handleCreatePost}
             className="h-12 w-12 flex items-center justify-center bg-[#242424] rounded-xl hover:bg-[#1e1e1e] focus:outline-none"
@@ -168,9 +143,24 @@ const NewsFeedSection = () => {
           </button>
         </div>
 
-        {/* Icons Section */}
+        {/* Image Preview Section */}
+        {imageUrl && (
+          <div className="relative mb-4">
+            <img
+              src={imageUrl}
+              alt="Preview"
+              className="w-full h-56 object-cover rounded-xl"
+            />
+            <button
+              onClick={handleRemoveImage}
+              className="absolute top-2 right-2 bg-[#DF7272] p-2 rounded-full text-white"
+            >
+              <span className="material-icons">close</span>
+            </button>
+          </div>
+        )}
+
         <div className="flex justify-between ml-16 mr-14">
-          {/* Gallery */}
           <div className="flex items-center bg-[#242424] p-2 pl-4 pr-4 rounded-xl cursor-pointer hover:bg-[#1e1e1e] relative">
             <span className="material-icons text-[#20D997] mr-2">photo</span>
             <p className="text-white">Gallery</p>
@@ -204,7 +194,6 @@ const NewsFeedSection = () => {
         </div>
       </div>
 
-      {/* Render the Posts */}
       <div className="mt-5 w-full p-4 rounded-xl flex flex-col">
         {postsLoading ? (
           <p className="text-white">Loading...</p>
@@ -221,15 +210,10 @@ const NewsFeedSection = () => {
               key={index}
               className="bg-[#2a2a2a] p-4 mb-10 rounded-xl flex flex-col space-y-3"
             >
-              {/* Display the username */}
               <div className="flex items-center space-x-2">
                 <p className="text-white font-semibold">{post.user.name}</p>
               </div>
-
-              {/* Post Text */}
               <p className="text-white">{post.text}</p>
-
-              {/* Post Image */}
               {post.imageUrl && (
                 <img
                   src={post.imageUrl}
