@@ -1,5 +1,5 @@
 import { useQuery, useMutation, gql } from "@apollo/client";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 
 // GraphQL queries and mutations
 const GET_ALL_USERS = gql`
@@ -15,6 +15,14 @@ const GET_ALL_USERS = gql`
 const GET_CURRENT_USER = gql`
   query {
     currentUser {
+      id
+    }
+  }
+`;
+
+const GET_FOLLOWING = gql`
+  query ($userId: String!) {
+    following(userId: $userId) {
       id
     }
   }
@@ -39,46 +47,58 @@ const UNFOLLOW_USER = gql`
 `;
 
 const AllUsersSection = () => {
-  // Apollo Client's useQuery hook to fetch all users
   const {
     loading: loadingUsers,
     error: errorUsers,
     data: dataUsers,
   } = useQuery(GET_ALL_USERS);
 
-  // Apollo Client's useQuery hook to fetch the current user
   const {
     loading: loadingCurrentUser,
     error: errorCurrentUser,
     data: dataCurrentUser,
   } = useQuery(GET_CURRENT_USER);
 
-  // Apollo Client's mutations for follow/unfollow
+  const { loading: loadingFollowing, data: dataFollowing } = useQuery(
+    GET_FOLLOWING,
+    {
+      variables: { userId: dataCurrentUser?.currentUser?.id || "" },
+      skip: !dataCurrentUser?.currentUser?.id,
+    }
+  );
+
   const [followUser] = useMutation(FOLLOW_USER);
   const [unfollowUser] = useMutation(UNFOLLOW_USER);
 
-  // State for the followed users to update UI dynamically
+  // Explicitly typing followedUsers as Set<string>
   const [followedUsers, setFollowedUsers] = useState<Set<string>>(new Set());
 
-  if (loadingUsers || loadingCurrentUser) return <p>Loading...</p>;
+  useEffect(() => {
+    if (dataFollowing?.following) {
+      // Explicitly typing followedUserIds as Set<string>
+      const followedUserIds: Set<string> = new Set(
+        dataFollowing.following.map((user: { id: string }) => user.id)
+      );
+      setFollowedUsers(followedUserIds);
+    }
+  }, [dataFollowing]);
+
+  if (loadingUsers || loadingCurrentUser || loadingFollowing)
+    return <p>Loading...</p>;
 
   if (errorUsers) return <p>Error fetching users: {errorUsers.message}</p>;
   if (errorCurrentUser)
     return <p>Error fetching current user: {errorCurrentUser.message}</p>;
 
-  // Filter out the current user from the list
   const filteredUsers = dataUsers.getAllUsers.filter(
     (user: { id: string }) => user.id !== dataCurrentUser.currentUser.id
   );
 
-  // Handle follow
   const handleFollow = async (userId: string) => {
     try {
       const { data } = await followUser({
         variables: { targetUserId: userId },
       });
-
-      console.log("Follow data: ", data);
 
       if (data?.followUser) {
         setFollowedUsers((prev) => new Set(prev).add(userId));
@@ -88,12 +108,12 @@ const AllUsersSection = () => {
     }
   };
 
-  // Handle unfollow
   const handleUnfollow = async (userId: string) => {
     try {
       const { data } = await unfollowUser({
         variables: { targetUserId: userId },
       });
+
       if (data?.unfollowUser) {
         setFollowedUsers((prev) => {
           const newFollowedUsers = new Set(prev);
@@ -115,13 +135,11 @@ const AllUsersSection = () => {
             key={user.id}
             className="flex items-center bg-[#242424] p-2 pl-4 pr-4 rounded-xl cursor-pointer hover:bg-[#1e1e1e] w-[90%]"
           >
-            {/* User details section */}
             <div className="flex flex-col justify-between flex-grow">
               <p className="text-white text-sm">{user.name}</p>
               <p className="text-gray-400 text-xs">{user.email}</p>
             </div>
 
-            {/* Follow/Unfollow button container */}
             <div className="flex-shrink-0">
               {followedUsers.has(user.id) ? (
                 <button
