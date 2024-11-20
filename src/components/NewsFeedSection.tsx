@@ -13,6 +13,9 @@ const GET_USER_POSTS = gql`
       text
       imageUrl
       createdAt
+      user {
+        name
+      }
     }
   }
 `;
@@ -202,7 +205,7 @@ const NewsFeedSection = () => {
       </div>
 
       {/* Render the Posts */}
-      <div className="mt-5 w-full bg-[#2a2a2a] p-4 rounded-xl flex flex-col">
+      <div className="mt-5 w-full p-4 rounded-xl flex flex-col">
         {postsLoading ? (
           <p className="text-white">Loading...</p>
         ) : postsError ? (
@@ -214,8 +217,19 @@ const NewsFeedSection = () => {
           </div>
         ) : (
           posts.map((post, index) => (
-            <div key={index} className="bg-[#2a2a2a] p-4 mb-4 rounded-xl">
+            <div
+              key={index}
+              className="bg-[#2a2a2a] p-4 mb-10 rounded-xl flex flex-col space-y-3"
+            >
+              {/* Display the username */}
+              <div className="flex items-center space-x-2">
+                <p className="text-white font-semibold">{post.user.name}</p>
+              </div>
+
+              {/* Post Text */}
               <p className="text-white">{post.text}</p>
+
+              {/* Post Image */}
               {post.imageUrl && (
                 <img
                   src={post.imageUrl}
