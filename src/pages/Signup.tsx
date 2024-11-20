@@ -26,6 +26,7 @@ const Signup: React.FC = () => {
 
   const [signupMutation] = useMutation(SIGNUP_MUTATION);
 
+  // function to handle sign-up
   const handleSignup = async (e: React.FormEvent) => {
     e.preventDefault();
 
@@ -43,7 +44,7 @@ const Signup: React.FC = () => {
 
       if (data.signup.token) {
         localStorage.setItem("authToken", data.signup.token);
-        navigate("/login"); // After successful signup, navigate to the login page
+        navigate("/login");
 
         console.log("User signed up and profile created.");
       }

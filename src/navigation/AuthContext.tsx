@@ -19,7 +19,7 @@ const AuthContext = createContext<AuthContextType | undefined>(undefined);
 // AuthProvider component to manage auth state and provide context
 export const AuthProvider = ({ children }: { children: ReactNode }) => {
   const [isAuthenticated, setIsAuthenticated] = useState<boolean>(false);
-  const [userId, setUserId] = useState<string | null>(null); // Store userId
+  const [userId, setUserId] = useState<string | null>(null);
   const [loading, setLoading] = useState<boolean>(true);
 
   // Checking if the user is authenticated on initial load from localStorage
@@ -38,7 +38,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     setIsAuthenticated(true);
     setUserId(userId);
     localStorage.setItem("token", token);
-    localStorage.setItem("userId", userId); // Store userId
+    localStorage.setItem("userId", userId);
   };
 
   // Logout function to reset authentication state, and remove token and userId from localStorage

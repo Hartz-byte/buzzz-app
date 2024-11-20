@@ -6,7 +6,7 @@ import { useAuth } from "../navigation/AuthContext";
 import axios from "axios";
 import { jwtDecode } from "jwt-decode";
 
-// GraphQL queries
+// GraphQL querie to get all posts
 const GET_USER_POSTS = gql`
   query GetUserPosts($userId: String!) {
     posts(userId: $userId) {
@@ -20,6 +20,7 @@ const GET_USER_POSTS = gql`
   }
 `;
 
+// GraphQL querie to create posts
 const CREATE_POST = gql`
   mutation CreatePost($text: String, $imageUrl: String, $tags: [String]) {
     createPost(text: $text, imageUrl: $imageUrl, tags: $tags) {
@@ -34,6 +35,7 @@ const CREATE_POST = gql`
   }
 `;
 
+// GraphQL querie to search for users
 const SEARCH_USERS = gql`
   query SearchUsers($searchTerm: String!) {
     searchUsers(searchTerm: $searchTerm) {
@@ -69,6 +71,7 @@ const NewsFeedSection = () => {
   const [searchUsers, { data: searchResults, loading: searchLoading }] =
     useLazyQuery(SEARCH_USERS);
 
+  // useEffect to get current user and store it's id in local storage
   useEffect(() => {
     const storedToken = localStorage.getItem("token");
 
@@ -82,18 +85,20 @@ const NewsFeedSection = () => {
     }
   }, []);
 
+  // useEffect to store available posts
   useEffect(() => {
     if (postsData) {
       setPosts(postsData.posts);
     }
   }, [postsData]);
-
+  // useEffect to search for the required user
   useEffect(() => {
     if (tagSearch.trim()) {
       searchUsers({ variables: { searchTerm: tagSearch } });
     }
   }, [tagSearch, searchUsers]);
 
+  // function to upload image on cloudinary
   const uploadImageToCloudinary = async (file: File) => {
     const formData = new FormData();
     formData.append("file", file);
@@ -111,6 +116,7 @@ const NewsFeedSection = () => {
     }
   };
 
+  // function to handle create post
   const handleCreatePost = async () => {
     if (!text.trim()) {
       alert("Post cannot be empty.");
@@ -137,6 +143,7 @@ const NewsFeedSection = () => {
     }
   };
 
+  // function to handle user tags
   const handleTagClick = (userId: string, userName: string) => {
     setTags((prevTags) => [...prevTags, userName]);
 
@@ -145,6 +152,7 @@ const NewsFeedSection = () => {
     setTagSearch("");
   };
 
+  // function to handle upload image
   const handleImageUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
     if (file) {
@@ -153,6 +161,7 @@ const NewsFeedSection = () => {
     }
   };
 
+  // function to remove image
   const handleRemoveImage = () => {
     setImageFile(null);
     setImageUrl("");

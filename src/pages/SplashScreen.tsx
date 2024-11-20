@@ -15,7 +15,7 @@ const SplashScreen: React.FC = () => {
     const mainTextTimeout = setTimeout(() => setShowMainText(true), 1000);
     const subTextTimeout = setTimeout(() => setShowSubText(true), 2000);
 
-    // Check auth status
+    // Check auth status and navigation
     const authTimeout = setTimeout(() => {
       if (isAuthenticated) {
         navigate("/home");

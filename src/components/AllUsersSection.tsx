@@ -1,7 +1,7 @@
 import { useQuery, useMutation, gql } from "@apollo/client";
 import { useState, useEffect } from "react";
 
-// GraphQL queries and mutations
+// GraphQL queries for getting all users
 const GET_ALL_USERS = gql`
   query {
     getAllUsers {
@@ -12,6 +12,7 @@ const GET_ALL_USERS = gql`
   }
 `;
 
+// GraphQL queries for getting current logged-in user
 const GET_CURRENT_USER = gql`
   query {
     currentUser {
@@ -20,6 +21,7 @@ const GET_CURRENT_USER = gql`
   }
 `;
 
+// GraphQL queries for getting users that the logged-in user is following
 const GET_FOLLOWING = gql`
   query ($userId: String!) {
     following(userId: $userId) {
@@ -28,6 +30,7 @@ const GET_FOLLOWING = gql`
   }
 `;
 
+// GraphQL queries to follow any user
 const FOLLOW_USER = gql`
   mutation followUser($targetUserId: String!) {
     followUser(targetUserId: $targetUserId) {
@@ -37,6 +40,7 @@ const FOLLOW_USER = gql`
   }
 `;
 
+// GraphQL queries to unfollow any user
 const UNFOLLOW_USER = gql`
   mutation unfollowUser($targetUserId: String!) {
     unfollowUser(targetUserId: $targetUserId) {
@@ -47,6 +51,7 @@ const UNFOLLOW_USER = gql`
 `;
 
 const AllUsersSection = () => {
+  // useQuery declarations
   const {
     loading: loadingUsers,
     error: errorUsers,
@@ -67,15 +72,15 @@ const AllUsersSection = () => {
     }
   );
 
+  // mutation declarations
   const [followUser] = useMutation(FOLLOW_USER);
   const [unfollowUser] = useMutation(UNFOLLOW_USER);
 
-  // Explicitly typing followedUsers as Set<string>
   const [followedUsers, setFollowedUsers] = useState<Set<string>>(new Set());
 
+  // useEffect to check if the logged-in user is following that particular user or not
   useEffect(() => {
     if (dataFollowing?.following) {
-      // Explicitly typing followedUserIds as Set<string>
       const followedUserIds: Set<string> = new Set(
         dataFollowing.following.map((user: { id: string }) => user.id)
       );
@@ -83,17 +88,12 @@ const AllUsersSection = () => {
     }
   }, [dataFollowing]);
 
-  if (loadingUsers || loadingCurrentUser || loadingFollowing)
-    return <p>Loading...</p>;
-
-  if (errorUsers) return <p>Error fetching users: {errorUsers.message}</p>;
-  if (errorCurrentUser)
-    return <p>Error fetching current user: {errorCurrentUser.message}</p>;
-
+  // filtering the logged-in user from the list
   const filteredUsers = dataUsers.getAllUsers.filter(
     (user: { id: string }) => user.id !== dataCurrentUser.currentUser.id
   );
 
+  // handle follow function
   const handleFollow = async (userId: string) => {
     try {
       const { data } = await followUser({
@@ -108,6 +108,7 @@ const AllUsersSection = () => {
     }
   };
 
+  // handle unfollow function
   const handleUnfollow = async (userId: string) => {
     try {
       const { data } = await unfollowUser({
@@ -126,9 +127,19 @@ const AllUsersSection = () => {
     }
   };
 
+  // status checking
+  if (loadingUsers || loadingCurrentUser || loadingFollowing)
+    return <p>Loading...</p>;
+
+  if (errorUsers) return <p>Error fetching users: {errorUsers.message}</p>;
+  if (errorCurrentUser)
+    return <p>Error fetching current user: {errorCurrentUser.message}</p>;
+
   return (
     <div className="w-[20%] flex flex-col items-center justify-center bg-[#2a2a2a] rounded-xl">
       <p className="text-white text-xl mb-4">All Users</p>
+
+      {/* mapping all available users to follow/unfollow */}
       <div className="flex flex-col items-center space-y-4 w-full">
         {filteredUsers.map((user: any) => (
           <div
@@ -140,6 +151,7 @@ const AllUsersSection = () => {
               <p className="text-gray-400 text-xs">{user.email}</p>
             </div>
 
+            {/* conditional button by checking the follow status */}
             <div className="flex-shrink-0">
               {followedUsers.has(user.id) ? (
                 <button

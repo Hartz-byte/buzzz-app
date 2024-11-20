@@ -23,6 +23,7 @@ const GET_CURRENT_USER = gql`
 const ProfileSection: React.FC = () => {
   const { data, loading, error } = useQuery(GET_CURRENT_USER);
 
+  // status checking
   if (loading) {
     return <p className="text-white text-center">Loading...</p>;
   }
@@ -32,6 +33,7 @@ const ProfileSection: React.FC = () => {
     return <p className="text-red-500 text-center">Error loading profile</p>;
   }
 
+  // value updation
   const userName = data?.currentUser?.name || "User";
   const followersCount = data?.currentUser?.followers.length || 0;
   const followingCount = data?.currentUser?.following.length || 0;

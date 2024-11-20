@@ -29,6 +29,7 @@ const Home = () => {
           {activeSection === "explore" && <ExploreSection />}
         </div>
 
+        {/* All users display section */}
         <AllUsersSection />
       </div>
     </div>
