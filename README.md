@@ -1,50 +1,97 @@
-# React + TypeScript + Vite
+# Buzzz - Social Media App with Vite + React + TypeScript and Node.js + GraphQL
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+## 📖 Project Overview
 
-Currently, two official plugins are available:
+This project is a feature-rich Social Media App that combines modern UI/UX with robust backend functionality to deliver a seamless user experience. It is built using Vite + React + TypeScript for the frontend and Node.js + GraphQL for the backend. The app includes functionalities like authentication, a dynamic news feed, posting with tagging, and follow/unfollow features.
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react/README.md) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+## 🌟 Features
 
-## Expanding the ESLint configuration
+User Authentication:
+1. Secure user from Node.js backend.
+2. Fully integrated authentication and authorization system to protect user data.
 
-If you are developing a production application, we recommend updating the configuration to enable type aware lint rules:
+News Feed:
+1. Displays posts from followed users in a smooth, infinite scroll layout.
+2. Data fetched and managed efficiently using GraphQL for better performance.
 
-- Configure the top-level `parserOptions` property like this:
+Posting:
+1. Users can create new posts with text and images.
+2. Includes the ability to tag other users in posts for better interaction.
 
+Follow/Unfollow:
+1. Users can follow/unfollow each other.
+2. Dynamic follow/unfollow counts are displayed in the UI.
+
+TypeScript:
+1. TypeScript ensures type safety, reducing potential bugs and making the codebase more reliable and maintainable.
+
+UI/UX Design:
+1. Developed using React components and styled with Tailwind CSS for a modern and responsive design.
+
+Testing:
+1. Comprehensive unit and integration tests to ensure the app performs as expected.
+
+Performance:
+1. Optimized for speed and scalability, particularly when fetching data with GraphQL.
+
+Future Enhancements:
+1. Additional features and improvements will be added in subsequent updates.
+
+## 💻 Tech Stack
+
+Frontend:
+1. Vite
+2. React + TypeScript
+3. Tailwind CSS
+4. GraphQL for data fetching
+
+Backend:
+1. Node.js
+2. GraphQL for API development and data queries
+3. Authentication via Node.js
+
+## 🛠️ Installation & Setup
+
+Prerequisites:
+1. Node.js installed on your system.
+2. A GraphQL server set up for the backend.
+
+Steps to Run Locally
+
+1. Clone the Repository
 ```js
-export default tseslint.config({
-  languageOptions: {
-    // other options...
-    parserOptions: {
-      project: ['./tsconfig.node.json', './tsconfig.app.json'],
-      tsconfigRootDir: import.meta.dirname,
-    },
-  },
-})
+git clone https://github.com/your-username/your-repo-name.git
+cd your-repo-name
 ```
 
-- Replace `tseslint.configs.recommended` to `tseslint.configs.recommendedTypeChecked` or `tseslint.configs.strictTypeChecked`
-- Optionally add `...tseslint.configs.stylisticTypeChecked`
-- Install [eslint-plugin-react](https://github.com/jsx-eslint/eslint-plugin-react) and update the config:
-
+2. Install Dependencies
+Install frontend dependencies:
 ```js
-// eslint.config.js
-import react from 'eslint-plugin-react'
-
-export default tseslint.config({
-  // Set the react version
-  settings: { react: { version: '18.3' } },
-  plugins: {
-    // Add the react plugin
-    react,
-  },
-  rules: {
-    // other rules...
-    // Enable its recommended rules
-    ...react.configs.recommended.rules,
-    ...react.configs['jsx-runtime'].rules,
-  },
-})
+cd frontend
+npm install
 ```
+```js
+cd backend
+npm install
+```
+
+3. Set Environment Variables
+Create .env files for both frontend and backend and configure them as required:
+1. Frontend: Provide API endpoints, GraphQL server URL, and authentication details.
+2. Backend: Configure database connection, GraphQL settings, and authentication.
+
+4. Run the Project
+```js
+cd frontend
+npm run dev
+```
+```js
+cd backend
+npm run dev
+```
+
+## 🚀 Usage
+1. Sign up or log in to the app.
+2. Follow/unfollow other users to curate your news feed.
+3. Create new posts with text or images and tag other users.
+4. Interact with posts in your news feed.
