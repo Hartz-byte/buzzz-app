@@ -88,6 +88,14 @@ const AllUsersSection = () => {
     }
   }, [dataFollowing]);
 
+  // status checking
+  if (loadingUsers || loadingCurrentUser || loadingFollowing)
+    return <p>Loading...</p>;
+
+  if (errorUsers) return <p>Error fetching users: {errorUsers.message}</p>;
+  if (errorCurrentUser)
+    return <p>Error fetching current user: {errorCurrentUser.message}</p>;
+
   // filtering the logged-in user from the list
   const filteredUsers = dataUsers.getAllUsers.filter(
     (user: { id: string }) => user.id !== dataCurrentUser.currentUser.id
@@ -126,14 +134,6 @@ const AllUsersSection = () => {
       console.error("Error unfollowing user", error);
     }
   };
-
-  // status checking
-  if (loadingUsers || loadingCurrentUser || loadingFollowing)
-    return <p>Loading...</p>;
-
-  if (errorUsers) return <p>Error fetching users: {errorUsers.message}</p>;
-  if (errorCurrentUser)
-    return <p>Error fetching current user: {errorCurrentUser.message}</p>;
 
   return (
     <div className="w-[20%] flex flex-col items-center justify-center bg-[#2a2a2a] rounded-xl">
