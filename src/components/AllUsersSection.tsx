@@ -148,7 +148,11 @@ const AllUsersSection = () => {
           >
             <div className="flex flex-col justify-between flex-grow">
               <p className="text-white text-sm">{user.name}</p>
-              <p className="text-gray-400 text-xs">{user.email}</p>
+              <p className="text-gray-400 text-xs">
+                {user.email.length > 15
+                  ? `${user.email.slice(0, 15)}...`
+                  : user.email}
+              </p>
             </div>
 
             <div className="flex-shrink-0">
