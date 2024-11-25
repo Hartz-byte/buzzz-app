@@ -5,6 +5,7 @@ import { gql } from "@apollo/client";
 import { useAuth } from "../navigation/AuthContext";
 import axios from "axios";
 import { jwtDecode } from "jwt-decode";
+import { format } from "date-fns";
 
 // GraphQL querie to get all posts
 const GET_USER_POSTS = gql`
@@ -46,6 +47,11 @@ const SEARCH_USERS = gql`
   }
 `;
 
+type Post = {
+  createdAt: string;
+  formattedDate?: string;
+};
+
 const NewsFeedSection = () => {
   const [text, setText] = useState<string>("");
   const [imageUrl, setImageUrl] = useState<string>("");
@@ -85,12 +91,22 @@ const NewsFeedSection = () => {
     }
   }, []);
 
-  // useEffect to store available posts
+  // useEffect to store available posts and update date format
   useEffect(() => {
     if (postsData) {
       setPosts(postsData.posts);
+      console.log(postsData);
+
+      // Format the createdAt field for each post excluding seconds
+      const formattedPosts: Post[] = postsData.posts.map((post: Post) => ({
+        ...post,
+        formattedDate: format(new Date(parseInt(post.createdAt)), "PPp"),
+      }));
+
+      setPosts(formattedPosts);
     }
   }, [postsData]);
+
   // useEffect to search for the required user
   useEffect(() => {
     if (tagSearch.trim()) {
@@ -295,29 +311,37 @@ const NewsFeedSection = () => {
         ) : postsError ? (
           <div>
             <p className="text-white">Error loading posts</p>
-            <pre className="text-white">
-              {JSON.stringify(postsError, null, 2)}
-            </pre>
           </div>
         ) : (
-          posts.map((post, index) => (
-            <div
-              key={index}
-              className="bg-[#2a2a2a] p-4 mb-10 rounded-xl flex flex-col space-y-3"
-            >
-              <div className="flex items-center space-x-2">
-                <p className="text-white font-semibold">{post.user.name}</p>
+          posts
+            .slice()
+            .reverse()
+            .map((post, index) => (
+              <div
+                key={index}
+                className="bg-[#2a2a2a] p-4 mb-10 rounded-xl flex flex-col space-y-3"
+              >
+                <div className="flex justify-between items-center space-x-2">
+                  <p className="text-[#B39757] font-semibold">
+                    {post.user.name}
+                  </p>
+
+                  <div className="text-gray-500 text-sm mt-2">
+                    {post.formattedDate}
+                  </div>
+                </div>
+
+                <p className="text-white">{post.text}</p>
+
+                {post.imageUrl && (
+                  <img
+                    src={post.imageUrl}
+                    alt="Post Image"
+                    className="mt-2 w-full h-56 object-cover rounded-xl"
+                  />
+                )}
               </div>
-              <p className="text-white">{post.text}</p>
-              {post.imageUrl && (
-                <img
-                  src={post.imageUrl}
-                  alt="Post Image"
-                  className="mt-2 w-full h-56 object-cover rounded-xl"
-                />
-              )}
-            </div>
-          ))
+            ))
         )}
       </div>
     </div>

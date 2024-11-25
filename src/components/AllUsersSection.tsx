@@ -151,7 +151,6 @@ const AllUsersSection = () => {
               <p className="text-gray-400 text-xs">{user.email}</p>
             </div>
 
-            {/* conditional button by checking the follow status */}
             <div className="flex-shrink-0">
               {followedUsers.has(user.id) ? (
                 <button
