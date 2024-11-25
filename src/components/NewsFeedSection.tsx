@@ -68,6 +68,7 @@ const NewsFeedSection = () => {
     data: postsData,
     loading: postsLoading,
     error: postsError,
+    refetch,
   } = useQuery(GET_USER_POSTS, {
     variables: { userId: userId || authUserId },
     skip: !userId,
@@ -92,6 +93,15 @@ const NewsFeedSection = () => {
     }
   }, []);
 
+  // useEffect for refetching
+  useEffect(() => {
+    const interval = setInterval(() => {
+      refetch();
+    }, 5000);
+
+    return () => clearInterval(interval);
+  }, [refetch]);
+
   // useEffect to store available posts and update date format
   useEffect(() => {
     if (postsData) {
@@ -110,9 +120,13 @@ const NewsFeedSection = () => {
 
   // useEffect to search for the required user
   useEffect(() => {
-    if (tagSearch.trim()) {
-      searchUsers({ variables: { searchTerm: tagSearch } });
-    }
+    const delayDebounceFn = setTimeout(() => {
+      if (tagSearch.trim()) {
+        searchUsers({ variables: { searchTerm: tagSearch } });
+      }
+    }, 300);
+
+    return () => clearTimeout(delayDebounceFn);
   }, [tagSearch, searchUsers]);
 
   // function to upload image on cloudinary
