@@ -60,6 +60,7 @@ const NewsFeedSection = () => {
   const [userId, setUserId] = useState<string | null>("");
   const [tags, setTags] = useState<string[]>([]);
   const [tagSearch, setTagSearch] = useState<string>("");
+  const [loading, setLoading] = useState<boolean>(false);
 
   const { userId: authUserId } = useAuth();
 
@@ -140,6 +141,8 @@ const NewsFeedSection = () => {
     }
 
     try {
+      setLoading(true);
+
       let uploadedImageUrl = imageUrl;
 
       if (imageFile) {
@@ -156,6 +159,8 @@ const NewsFeedSection = () => {
       setTags([]);
     } catch (error) {
       console.error("Error creating post:", error);
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -204,7 +209,12 @@ const NewsFeedSection = () => {
             onClick={handleCreatePost}
             className="h-12 w-12 flex items-center justify-center bg-[#242424] rounded-xl hover:bg-[#1e1e1e] focus:outline-none"
           >
-            <span className="material-icons text-white text-2xl">send</span>
+            {/* <span className="material-icons text-white text-2xl">send</span> */}
+            {loading ? (
+              <div className="animate-spin border-2 border-t-transparent border-white rounded-full w-5 h-5"></div>
+            ) : (
+              <span className="material-icons text-white text-2xl">send</span>
+            )}
           </button>
         </div>
 
