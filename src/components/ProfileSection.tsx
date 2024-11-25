@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { gql, useQuery } from "@apollo/client";
 import CoverPic from "../assets/images/CoverPic.jpg";
 import ProfilePic from "../assets/images/ProfilePic.jpg";
@@ -21,7 +21,16 @@ const GET_CURRENT_USER = gql`
 `;
 
 const ProfileSection: React.FC = () => {
-  const { data, loading, error } = useQuery(GET_CURRENT_USER);
+  const { data, loading, error, refetch } = useQuery(GET_CURRENT_USER);
+
+  // useEffect for refetching
+  useEffect(() => {
+    const interval = setInterval(() => {
+      refetch();
+    }, 5000);
+
+    return () => clearInterval(interval);
+  }, [refetch]);
 
   // status checking
   if (loading) {
