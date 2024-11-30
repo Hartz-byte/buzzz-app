@@ -204,6 +204,7 @@ const NewsFeedSection = () => {
 
   return (
     <div className="w-[100%] flex flex-col items-center">
+      {/* Top container, Tagging UI, Image Preview Section, Displaying tags, Icons */}
       <div className="w-full bg-[#2a2a2a] p-4 rounded-xl flex flex-col">
         {/* Top container */}
         <div className="flex items-center mb-4">
@@ -223,7 +224,6 @@ const NewsFeedSection = () => {
             onClick={handleCreatePost}
             className="h-12 w-12 flex items-center justify-center bg-[#242424] rounded-xl hover:bg-[#1e1e1e] focus:outline-none"
           >
-            {/* <span className="material-icons text-white text-2xl">send</span> */}
             {loading ? (
               <div className="animate-spin border-2 border-t-transparent border-white rounded-full w-5 h-5"></div>
             ) : (
@@ -345,18 +345,33 @@ const NewsFeedSection = () => {
                 key={index}
                 className="bg-[#2a2a2a] p-4 mb-10 rounded-xl flex flex-col space-y-3"
               >
-                <div className="flex justify-between items-center space-x-2">
-                  <p className="text-[#B39757] font-semibold">
-                    {post.user.name}
-                  </p>
+                {/* user's info */}
+                <div className="flex justify-between space-x-2">
+                  <div className="flex items-center">
+                    <img
+                      src={ProfilePic}
+                      alt="Profile"
+                      className="w-12 h-12 object-cover rounded-full mr-4"
+                    />
+
+                    <div>
+                      <p className="text-[#B39757] font-semibold">
+                        {post.user.name}
+                      </p>
+
+                      <p className="text-md text-gray-400">@hrsh_line_up</p>
+                    </div>
+                  </div>
 
                   <div className="text-gray-500 text-sm mt-2">
                     {post.formattedDate}
                   </div>
                 </div>
 
+                {/* text post */}
                 <p className="text-white">{post.text}</p>
 
+                {/* image post */}
                 {post.imageUrl && (
                   <img
                     src={post.imageUrl}
@@ -364,6 +379,41 @@ const NewsFeedSection = () => {
                     className="mt-2 w-full h-56 object-cover rounded-xl"
                   />
                 )}
+
+                {/* like, comment, share icon */}
+                <div className="flex items-center pt-5 space-x-4">
+                  <button className="text-gray-400 hover:text-gray-300 p-0 bg-[#2a2a2a]">
+                    <span className="material-icons text-md">favorite</span>
+                  </button>
+                  <button className="text-gray-400 hover:text-gray-300 p-0 bg-[#2a2a2a]">
+                    <span className="material-icons text-md">comment</span>
+                  </button>
+                  <button className="text-gray-400 hover:text-gray-300 p-0 bg-[#2a2a2a]">
+                    <span className="material-icons text-md">share</span>
+                  </button>
+                </div>
+
+                {/* divider */}
+                <div className="w-full h-[0.2px] bg-gray-600" />
+
+                {/* comment input */}
+                <div className="flex items-center mb-4 bg-[#242424] rounded-xl p-2">
+                  <img
+                    src={ProfilePic}
+                    alt="Profile"
+                    className="w-10 h-10 object-cover rounded-full mr-4"
+                  />
+                  <input
+                    type="text"
+                    placeholder="Write your comment"
+                    className="flex-1 h-12 bg-transparent rounded-xl text-white p-3 focus:outline-none focus:ring-2 focus:ring-[#B39757]"
+                  />
+                  <button className="h-12 w-12 flex items-center justify-center bg-transparent hover:bg-[#1e1e1e] rounded-xl focus:outline-none">
+                    <span className="material-icons text-white text-2xl">
+                      send
+                    </span>
+                  </button>
+                </div>
               </div>
             ))
         )}
