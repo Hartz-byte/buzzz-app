@@ -56,7 +56,7 @@ const Signup: React.FC = () => {
   };
 
   return (
-    <div className="min-h-screen flex flex-col md:flex-row bg-[#1a1a1a]">
+    <div className="min-h-screen flex flex-col md:flex-row items-center justify-center bg-[#1a1a1a]">
       {/* Left Half */}
       <div className="w-full md:w-1/2 flex flex-col justify-center items-center px-4 py-8 md:py-0">
         <img

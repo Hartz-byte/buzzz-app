@@ -70,7 +70,7 @@ const Login: React.FC = () => {
   };
 
   return (
-    <div className="min-h-screen flex flex-col md:flex-row bg-[#1a1a1a]">
+    <div className="min-h-screen flex flex-col md:flex-row items-center justify-center bg-[#1a1a1a]">
       {/* Left Half */}
       <div className="w-full md:w-1/2 flex justify-center items-center p-4">
         <img
