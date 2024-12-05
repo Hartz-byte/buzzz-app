@@ -1,51 +1,16 @@
 import { useState, useEffect } from "react";
-import ProfilePic from "../assets/images/ProfilePic.jpg";
 import { useLazyQuery, useMutation, useQuery } from "@apollo/client";
-import { gql } from "@apollo/client";
 import { useAuth } from "../navigation/AuthContext";
 import axios from "axios";
 import { jwtDecode } from "jwt-decode";
 import { format } from "date-fns";
 
-// GraphQL querie to get all posts
-const GET_USER_POSTS = gql`
-  query GetUserPosts($userId: String!) {
-    posts(userId: $userId) {
-      text
-      imageUrl
-      createdAt
-      user {
-        name
-      }
-    }
-  }
-`;
-
-// GraphQL querie to create posts
-const CREATE_POST = gql`
-  mutation CreatePost($text: String, $imageUrl: String, $tags: [String]) {
-    createPost(text: $text, imageUrl: $imageUrl, tags: $tags) {
-      text
-      imageUrl
-      createdAt
-      tags {
-        id
-        name
-      }
-    }
-  }
-`;
-
-// GraphQL querie to search for users
-const SEARCH_USERS = gql`
-  query SearchUsers($searchTerm: String!) {
-    searchUsers(searchTerm: $searchTerm) {
-      id
-      name
-      email
-    }
-  }
-`;
+import {
+  GET_USER_POSTS,
+  CREATE_POST,
+  SEARCH_USERS,
+} from "../graphql/graphql.ts";
+import ProfilePic from "../assets/images/ProfilePic.jpg";
 
 type Post = {
   createdAt: string;

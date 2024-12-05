@@ -1,57 +1,15 @@
-import { useQuery, useMutation, gql } from "@apollo/client";
+import { useQuery, useMutation } from "@apollo/client";
 import { useState, useEffect } from "react";
-
-// GraphQL queries for getting all users
-const GET_ALL_USERS = gql`
-  query {
-    getAllUsers {
-      id
-      name
-      email
-    }
-  }
-`;
-
-// GraphQL queries for getting current logged-in user
-const GET_CURRENT_USER = gql`
-  query {
-    currentUser {
-      id
-    }
-  }
-`;
-
-// GraphQL queries for getting users that the logged-in user is following
-const GET_FOLLOWING = gql`
-  query ($userId: String!) {
-    following(userId: $userId) {
-      id
-    }
-  }
-`;
-
-// GraphQL queries to follow any user
-const FOLLOW_USER = gql`
-  mutation followUser($targetUserId: String!) {
-    followUser(targetUserId: $targetUserId) {
-      message
-      followingCount
-    }
-  }
-`;
-
-// GraphQL queries to unfollow any user
-const UNFOLLOW_USER = gql`
-  mutation unfollowUser($targetUserId: String!) {
-    unfollowUser(targetUserId: $targetUserId) {
-      message
-      followingCount
-    }
-  }
-`;
+import {
+  GET_ALL_USERS,
+  GET_CURRENT_USER,
+  GET_FOLLOWING,
+  FOLLOW_USER,
+  UNFOLLOW_USER,
+} from "../graphql/graphql.ts";
 
 const AllUsersSection = () => {
-  // useQuery declarations
+  // useQuery hooks
   const {
     loading: loadingUsers,
     error: errorUsers,
@@ -72,7 +30,7 @@ const AllUsersSection = () => {
     }
   );
 
-  // mutation declarations
+  // mutation hooks
   const [followUser] = useMutation(FOLLOW_USER);
   const [unfollowUser] = useMutation(UNFOLLOW_USER);
 

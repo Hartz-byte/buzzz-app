@@ -1,27 +1,12 @@
 import React, { useEffect } from "react";
-import { gql, useQuery } from "@apollo/client";
+import { useQuery } from "@apollo/client";
+
 import CoverPic from "../assets/images/CoverPic.jpg";
+import { GET_CURRENT_USER_DETAIL } from "../graphql/graphql.ts";
 import ProfilePic from "../assets/images/ProfilePic.jpg";
 
-// GraphQL query to fetch the current user and their followers/following
-const GET_CURRENT_USER = gql`
-  query GetCurrentUser {
-    currentUser {
-      name
-      followers {
-        id
-        name
-      }
-      following {
-        id
-        name
-      }
-    }
-  }
-`;
-
 const ProfileSection: React.FC = () => {
-  const { data, loading, error, refetch } = useQuery(GET_CURRENT_USER);
+  const { data, loading, error, refetch } = useQuery(GET_CURRENT_USER_DETAIL);
 
   // useEffect for refetching
   useEffect(() => {
