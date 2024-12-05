@@ -1,5 +1,29 @@
 import { gql } from "@apollo/client";
 
+// GraphQL mutation for sign-up
+export const SIGNUP_MUTATION = gql`
+  mutation Signup($name: String!, $email: String!, $password: String!) {
+    signup(name: $name, email: $email, password: $password) {
+      token
+      message
+    }
+  }
+`;
+
+// GraphQL Mutation for login
+export const LOGIN_MUTATION = gql`
+  mutation Login($email: String!, $password: String!) {
+    login(email: $email, password: $password) {
+      token
+      user {
+        id
+        name
+        email
+      }
+    }
+  }
+`;
+
 // Queries for getting users
 export const GET_ALL_USERS = gql`
   query {

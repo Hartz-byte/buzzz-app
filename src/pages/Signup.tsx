@@ -1,19 +1,9 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useMutation } from "@apollo/client";
-import gql from "graphql-tag";
 
 import Logo from "../assets/logo/Buzzz-Logo.jpg";
-
-// GraphQL mutation for sign-up
-const SIGNUP_MUTATION = gql`
-  mutation Signup($name: String!, $email: String!, $password: String!) {
-    signup(name: $name, email: $email, password: $password) {
-      token
-      message
-    }
-  }
-`;
+import { SIGNUP_MUTATION } from "../graphql/graphql";
 
 const Signup: React.FC = () => {
   const navigate = useNavigate();
