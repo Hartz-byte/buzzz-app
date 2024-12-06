@@ -9,6 +9,7 @@ import {
   GET_USER_POSTS,
   CREATE_POST,
   SEARCH_USERS,
+  GET_CURRENT_USER_DETAIL,
 } from "../graphql/graphql.ts";
 import ProfilePic from "../assets/images/ProfilePic.jpg";
 
@@ -43,6 +44,10 @@ const NewsFeedSection = () => {
 
   const [searchUsers, { data: searchResults, loading: searchLoading }] =
     useLazyQuery(SEARCH_USERS);
+
+  const { data } = useQuery(GET_CURRENT_USER_DETAIL);
+
+  const profilePicture = data?.currentUser?.profilePicture || ProfilePic;
 
   // useEffect to get current user and store it's id in local storage
   useEffect(() => {
@@ -174,7 +179,7 @@ const NewsFeedSection = () => {
         {/* Top container */}
         <div className="flex items-center mb-4">
           <img
-            src={ProfilePic}
+            src={profilePicture}
             alt="Profile"
             className="w-12 h-12 object-cover rounded-full mr-4"
           />
@@ -314,7 +319,7 @@ const NewsFeedSection = () => {
                 <div className="flex justify-between space-x-2">
                   <div className="flex items-center">
                     <img
-                      src={ProfilePic}
+                      src={post.user.profilePicture}
                       alt="Profile"
                       className="w-12 h-12 object-cover rounded-full mr-4"
                     />
@@ -324,7 +329,9 @@ const NewsFeedSection = () => {
                         {post.user.name}
                       </p>
 
-                      <p className="text-md text-gray-400">@hrsh_line_up</p>
+                      <p className="text-md text-gray-400">
+                        @{post.user.username}
+                      </p>
                     </div>
                   </div>
 
@@ -364,7 +371,7 @@ const NewsFeedSection = () => {
                 {/* comment input */}
                 <div className="flex items-center mb-4 bg-[#242424] rounded-xl p-2">
                   <img
-                    src={ProfilePic}
+                    src={profilePicture}
                     alt="Profile"
                     className="w-10 h-10 object-cover rounded-full mr-4"
                   />

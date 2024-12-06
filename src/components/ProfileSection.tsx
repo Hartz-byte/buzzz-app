@@ -29,6 +29,9 @@ const ProfileSection: React.FC = () => {
 
   // value updation
   const userName = data?.currentUser?.name || "User";
+  const username = data?.currentUser?.username;
+  const bio = data?.currentUser?.bio || "";
+  const profilePicture = data?.currentUser?.profilePicture || ProfilePic;
   const followersCount = data?.currentUser?.followers.length || 0;
   const followingCount = data?.currentUser?.following.length || 0;
 
@@ -42,7 +45,7 @@ const ProfileSection: React.FC = () => {
           className="w-full h-full object-cover rounded-t-xl"
         />
         <img
-          src={ProfilePic}
+          src={profilePicture}
           alt="Profile"
           className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-24 h-24 rounded-full object-cover border-2 border-white"
         />
@@ -51,8 +54,8 @@ const ProfileSection: React.FC = () => {
       {/* User Info */}
       <div className="text-center text-white">
         <p className="text-xl font-semibold">{userName}</p>
-        <p className="text-md text-gray-400">@hrsh_line_up</p>
-        <p className="text-sm text-gray-500 mt-5">Believe in yourself</p>
+        <p className="text-md text-gray-400">@{username}</p>
+        <p className="text-sm text-gray-500 mt-5">{bio}</p>
       </div>
 
       {/* Following and Followers */}

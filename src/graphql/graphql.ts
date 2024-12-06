@@ -44,7 +44,7 @@ export const GET_ALL_USERS = gql`
     getAllUsers {
       id
       name
-      email
+      username
     }
   }
 `;
@@ -98,6 +98,9 @@ export const GET_CURRENT_USER_DETAIL = gql`
   query GetCurrentUser {
     currentUser {
       name
+      profilePicture
+      username
+      bio
       followers {
         id
         name
@@ -119,6 +122,8 @@ export const GET_USER_POSTS = gql`
       createdAt
       user {
         name
+        profilePicture
+        username
       }
     }
   }
