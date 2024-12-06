@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useMutation } from "@apollo/client";
+import axios from "axios";
 
 import Logo from "../assets/logo/Buzzz-Logo.jpg";
 import { SIGNUP_MUTATION } from "../graphql/graphql";
@@ -11,38 +12,81 @@ const Signup: React.FC = () => {
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [username, setUsername] = useState("");
+  const [bio, setBio] = useState("");
+  const [profilePicture, setProfilePicture] = useState<File | null>(null);
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
-
+  const [usernameError, setUsernameError] = useState("");
   const [signupMutation] = useMutation(SIGNUP_MUTATION);
 
-  // function to handle sign-up
+  // Cloudinary image upload function
+  const uploadImageToCloudinary = async (file: File) => {
+    const formData = new FormData();
+    formData.append("file", file);
+    formData.append("upload_preset", "my_cloudinary_preset");
+
+    try {
+      const response = await axios.post(
+        `https://api.cloudinary.com/v1_1/dsxdbnx7u/image/upload`,
+        formData
+      );
+      return response.data.secure_url;
+    } catch (error) {
+      console.error("Error uploading image to Cloudinary", error);
+      return "";
+    }
+  };
+
+  // Function to handle sign-up
   const handleSignup = async (e: React.FormEvent) => {
     e.preventDefault();
 
+    // Check if the username is unique (simulating with a mock API call)
+    setUsernameError("");
     setLoading(true);
     setError("");
 
     try {
+      const isUsernameUnique = await checkUsernameUniqueness(username);
+      if (!isUsernameUnique) {
+        setUsernameError("Username is already taken. Please choose another.");
+        setLoading(false);
+        return;
+      }
+
+      let profilePictureUrl = "";
+      if (profilePicture) {
+        profilePictureUrl = await uploadImageToCloudinary(profilePicture);
+      }
+
       const { data } = await signupMutation({
         variables: {
           name,
           email,
           password,
+          username,
+          profilePicture: profilePictureUrl,
+          bio,
         },
       });
 
       if (data.signup.token) {
         localStorage.setItem("authToken", data.signup.token);
         navigate("/login");
-
-        console.log("User signed up and profile created.");
       }
     } catch (err) {
       setError("Sign up failed. Please try again.");
     } finally {
       setLoading(false);
     }
+  };
+
+  // Mock function to simulate username uniqueness check
+  const checkUsernameUniqueness = async (username: string) => {
+    // Replace with an actual backend call to check username uniqueness
+    const takenUsernames = ["takenUsername1", "takenUsername2"];
+    return !takenUsernames.includes(username);
   };
 
   return (
@@ -70,6 +114,33 @@ const Signup: React.FC = () => {
           </h2>
 
           {error && <p className="text-red-500 mb-4 text-center">{error}</p>}
+          {usernameError && (
+            <p className="text-red-500 mb-4 text-center">{usernameError}</p>
+          )}
+
+          {/* Profile Picture Upload */}
+          <div className="flex flex-col items-center">
+            <div
+              className="w-32 h-32 rounded-full bg-gray-300 flex items-center justify-center cursor-pointer overflow-hidden"
+              onClick={() => document.getElementById("profilePicture")?.click()}
+            >
+              {profilePicture ? (
+                <img
+                  src={URL.createObjectURL(profilePicture)}
+                  alt="Profile"
+                  className="w-full h-full object-cover"
+                />
+              ) : (
+                <span className="text-white">Profile Picture</span>
+              )}
+            </div>
+            <input
+              type="file"
+              id="profilePicture"
+              className="hidden"
+              onChange={(e) => setProfilePicture(e.target.files?.[0] || null)}
+            />
+          </div>
 
           {/* Name Input */}
           <div className="flex flex-col">
@@ -116,6 +187,37 @@ const Signup: React.FC = () => {
               value={password}
               onChange={(e) => setPassword(e.target.value)}
               required
+            />
+          </div>
+
+          {/* Username Input */}
+          <div className="flex flex-col">
+            <label htmlFor="username" className="text-white mb-2">
+              Username
+            </label>
+            <input
+              type="text"
+              id="username"
+              placeholder="Username"
+              className="block w-full p-2 rounded bg-[#3B364C] text-white"
+              value={username}
+              onChange={(e) => setUsername(e.target.value)}
+              required
+            />
+          </div>
+
+          {/* Bio Input */}
+          <div className="flex flex-col">
+            <label htmlFor="bio" className="text-white mb-2">
+              Bio (Optional)
+            </label>
+            <input
+              type="text"
+              id="bio"
+              placeholder="Your bio"
+              className="block w-full p-2 rounded bg-[#3B364C] text-white"
+              value={bio}
+              onChange={(e) => setBio(e.target.value)}
             />
           </div>
 

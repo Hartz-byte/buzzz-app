@@ -13,8 +13,8 @@ interface ApolloClientSetupProps {
 }
 
 const httpLink = createHttpLink({
-  // uri: "https://buzzz-server.vercel.app/graphql",
-  uri: "http://localhost:3000/graphql",
+  uri: "https://buzzz-backend-gamma.vercel.app/graphql",
+  // uri: "http://localhost:3000/graphql",
   credentials: "include",
 });
 
