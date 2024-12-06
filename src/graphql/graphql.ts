@@ -8,7 +8,7 @@ export const SIGNUP_MUTATION = gql`
     $password: String!
     $username: String!
     $profilePicture: String
-    $quote: String
+    $bio: String
   ) {
     signup(
       name: $name
@@ -16,7 +16,7 @@ export const SIGNUP_MUTATION = gql`
       password: $password
       username: $username
       profilePicture: $profilePicture
-      quote: $quote
+      bio: $bio
     ) {
       token
       message
