@@ -1,10 +1,10 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { useMutation } from "@apollo/client";
+import { useMutation, useQuery } from "@apollo/client";
 import axios from "axios";
 
 import Logo from "../assets/logo/Buzzz-Logo.jpg";
-import { SIGNUP_MUTATION } from "../graphql/graphql";
+import { SIGNUP_MUTATION, GET_ALL_USERNAMES } from "../graphql/graphql";
 
 const Signup: React.FC = () => {
   const navigate = useNavigate();
@@ -19,7 +19,13 @@ const Signup: React.FC = () => {
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
   const [usernameError, setUsernameError] = useState("");
+
   const [signupMutation] = useMutation(SIGNUP_MUTATION);
+  const {
+    data,
+    loading: usernamesLoading,
+    error: usernamesError,
+  } = useQuery(GET_ALL_USERNAMES);
 
   // Cloudinary image upload function
   const uploadImageToCloudinary = async (file: File) => {
@@ -76,18 +82,22 @@ const Signup: React.FC = () => {
         localStorage.setItem("authToken", data.signup.token);
         navigate("/login");
       }
-    } catch (err) {
-      setError("Sign up failed. Please try again.");
+    } catch (err: any) {
+      if (err.message === "USERNAME_TAKEN") {
+        setUsernameError("The username is already taken.");
+      } else {
+        setError("Sign up failed. Please try again.");
+      }
     } finally {
       setLoading(false);
     }
   };
 
   // Mock function to simulate username uniqueness check
-  const checkUsernameUniqueness = async (username: string) => {
-    // Replace with an actual backend call to check username uniqueness
-    const takenUsernames = ["takenUsername1", "takenUsername2"];
-    return !takenUsernames.includes(username);
+  const checkUsernameUniqueness = (username: string) => {
+    if (usernamesLoading || usernamesError) return true;
+    const usernames = data?.getAllUsernames || [];
+    return !usernames.includes(username);
   };
 
   return (
@@ -113,11 +123,6 @@ const Signup: React.FC = () => {
           <h2 className="text-xl font-bold text-white mb-4 text-center">
             Sign Up
           </h2>
-
-          {error && <p className="text-red-500 mb-4 text-center">{error}</p>}
-          {usernameError && (
-            <p className="text-red-500 mb-4 text-center">{usernameError}</p>
-          )}
 
           {/* Profile Picture Upload */}
           <div className="flex flex-col items-center">
@@ -227,6 +232,11 @@ const Signup: React.FC = () => {
               onChange={(e) => setBio(e.target.value)}
             />
           </div>
+
+          {error && <p className="text-red-500 mb-4 text-center">{error}</p>}
+          {usernameError && (
+            <p className="text-red-500 mb-4 text-center">{usernameError}</p>
+          )}
 
           {/* Signup Button */}
           <button

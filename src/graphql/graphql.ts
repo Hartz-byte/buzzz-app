@@ -58,6 +58,13 @@ export const GET_CURRENT_USER = gql`
   }
 `;
 
+// Query to get all usernames
+export const GET_ALL_USERNAMES = gql`
+  query GetAllUsernames {
+    getAllUsernames
+  }
+`;
+
 // Query to get the users that the logged-in user is following
 export const GET_FOLLOWING = gql`
   query ($userId: String!) {
