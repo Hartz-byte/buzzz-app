@@ -12,6 +12,7 @@ const Signup: React.FC = () => {
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [isPasswordVisible, setIsPasswordVisible] = useState(false);
   const [username, setUsername] = useState("");
   const [bio, setBio] = useState("");
   const [profilePicture, setProfilePicture] = useState<File | null>(null);
@@ -175,12 +176,12 @@ const Signup: React.FC = () => {
           </div>
 
           {/* Password Input */}
-          <div className="flex flex-col">
+          <div className="flex flex-col relative">
             <label htmlFor="password" className="text-white mb-2">
               Password
             </label>
             <input
-              type="password"
+              type={isPasswordVisible ? "text" : "password"}
               id="password"
               placeholder="Password"
               className="block w-full p-2 rounded bg-[#3B364C] text-white"
@@ -188,6 +189,12 @@ const Signup: React.FC = () => {
               onChange={(e) => setPassword(e.target.value)}
               required
             />
+            <span
+              className="absolute right-2 top-10 cursor-pointer text-white"
+              onClick={() => setIsPasswordVisible(!isPasswordVisible)}
+            >
+              {isPasswordVisible ? "🔓" : "🔒"}
+            </span>
           </div>
 
           {/* Username Input */}
@@ -227,7 +234,7 @@ const Signup: React.FC = () => {
             className="w-full py-2 mt-4 bg-[#9281BD] text-white rounded flex justify-center items-center"
             disabled={loading}
           >
-            {loading ? "Loading..." : "Sign Up"}
+            {loading ? "Signing Up..." : "Sign Up"}
           </button>
 
           {/* Log In Link */}

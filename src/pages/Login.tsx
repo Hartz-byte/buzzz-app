@@ -12,6 +12,7 @@ const Login: React.FC = () => {
 
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [isPasswordVisible, setIsPasswordVisible] = useState(false);
   const [error, setError] = useState("");
   const [focusedField, setFocusedField] = useState<string | null>(null);
 
@@ -106,12 +107,12 @@ const Login: React.FC = () => {
           </div>
 
           {/* Password Input */}
-          <div className="flex flex-col">
+          <div className="flex flex-col relative">
             <label htmlFor="password" className="text-white mb-2">
               Password
             </label>
             <input
-              type="password"
+              type={isPasswordVisible ? "text" : "password"}
               id="password"
               placeholder="Password"
               className={`block w-full p-2 rounded ${
@@ -125,6 +126,12 @@ const Login: React.FC = () => {
               onBlur={() => setFocusedField(null)}
               required
             />
+            <span
+              className="absolute right-2 top-10 cursor-pointer text-white"
+              onClick={() => setIsPasswordVisible(!isPasswordVisible)}
+            >
+              {isPasswordVisible ? "🔓" : "🔒"}
+            </span>
           </div>
 
           {/* Login Button */}
