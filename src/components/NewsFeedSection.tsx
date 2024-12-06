@@ -271,7 +271,7 @@ const NewsFeedSection = () => {
             <input
               type="file"
               accept="image/*"
-              className="absolute inset-0 opacity-0 cursor-pointer"
+              className="absolute inset-0 opacity-0 pointer-events-none"
               onChange={handleImageUpload}
             />
           </div>
