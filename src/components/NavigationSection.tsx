@@ -8,8 +8,10 @@ const NavigationSection = ({
 }: {
   onChangeSection: (section: string) => void;
 }) => {
-  const [activeTab, setActiveTab] = useState("home");
   const navigate = useNavigate();
+
+  const [activeTab, setActiveTab] = useState("home");
+  const [logoutDialog, setLogoutDialog] = useState(false);
 
   // Function to handle log out
   const handleLogout = async () => {
@@ -67,11 +69,40 @@ const NavigationSection = ({
 
       {/* Logout Button */}
       <button
-        onClick={handleLogout}
+        onClick={() => setLogoutDialog(true)}
         className="text-white bg-red-600 px-4 py-2 rounded-md hover:bg-red-700 transition focus:outline-none"
       >
         Log Out
       </button>
+
+      {/* Logout Dialog */}
+      {logoutDialog && (
+        <>
+          {/* Background Blur */}
+          <div className="fixed inset-0 bg-black bg-opacity-50 backdrop-blur-md z-10" />
+
+          {/* Dialog Box */}
+          <div className="fixed top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 bg-[#1A1A1A] p-6 rounded-md z-20 text-center w-[300px]">
+            <p className="text-white mb-6 text-lg">Logout from Buzzz?</p>
+
+            <div className="flex justify-around">
+              <button
+                onClick={handleLogout}
+                className="bg-[#2A2A2A] text-white px-4 py-2 rounded-md hover:bg-[#3A3A3A] transition focus:outline-none"
+              >
+                Yes
+              </button>
+
+              <button
+                onClick={() => setLogoutDialog(false)}
+                className="bg-[#2A2A2A] text-white px-4 py-2 rounded-md hover:bg-[#3A3A3A] transition focus:outline-none"
+              >
+                No
+              </button>
+            </div>
+          </div>
+        </>
+      )}
     </div>
   );
 };
