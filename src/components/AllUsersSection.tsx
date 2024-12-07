@@ -97,36 +97,39 @@ const AllUsersSection = () => {
     <div className="w-[20%] flex flex-col items-center justify-center bg-[#2a2a2a] rounded-xl">
       <p className="text-white text-xl mb-4">All Users</p>
 
-      {/* mapping all available users to follow/unfollow */}
+      {/* Mapping all available users to follow/unfollow */}
       <div className="flex flex-col items-center space-y-4 w-full">
         {filteredUsers.map((user: any) => (
           <div
             key={user.id}
             className="flex items-center bg-[#242424] p-2 pl-4 pr-4 rounded-xl cursor-pointer hover:bg-[#1e1e1e] w-[90%]"
           >
+            {/* Profile Picture */}
             <img
               src={user.profilePicture}
               alt="Profile"
-              className="w-10 h-10 object-cover rounded-full mr-4"
+              className="w-10 h-10 object-cover rounded-full mr-4 flex-shrink-0"
             />
 
-            <div className="flex flex-col justify-between flex-grow">
-              <p className="text-white text-sm">{user.name}</p>
-              <p className="text-gray-400 text-xs">@{user.username}</p>
+            {/* User Information */}
+            <div className="flex flex-col justify-between flex-grow overflow-hidden">
+              <p className="text-white text-sm truncate">{user.name}</p>
+              <p className="text-gray-400 text-xs truncate">@{user.username}</p>
             </div>
 
-            <div className="flex-shrink-0">
+            {/* Follow/Unfollow Button */}
+            <div className="ml-4 flex-shrink-0">
               {followedUsers.has(user.id) ? (
                 <button
                   onClick={() => handleUnfollow(user.id)}
-                  className="bg-red-500 text-white py-1 px-4 rounded-full"
+                  className="bg-red-500 text-white py-1 px-4 rounded-full flex items-center justify-center"
                 >
                   <span className="material-icons">person_remove</span>
                 </button>
               ) : (
                 <button
                   onClick={() => handleFollow(user.id)}
-                  className="bg-blue-500 text-white py-1 px-4 rounded-full"
+                  className="bg-blue-500 text-white py-1 px-4 rounded-full flex items-center justify-center"
                 >
                   <span className="material-icons">person_add</span>
                 </button>

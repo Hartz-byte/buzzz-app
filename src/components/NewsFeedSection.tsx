@@ -27,6 +27,7 @@ const NewsFeedSection = () => {
   const [tags, setTags] = useState<string[]>([]);
   const [tagSearch, setTagSearch] = useState<string>("");
   const [loading, setLoading] = useState<boolean>(false);
+  const [openMenuId, setOpenMenuId] = useState<number | null>(null);
 
   const { userId: authUserId } = useAuth();
 
@@ -172,6 +173,17 @@ const NewsFeedSection = () => {
     setImageUrl("");
   };
 
+  // function to toggle menu for a specific post
+  const toggleMenu = (id: number) => {
+    setOpenMenuId((prevId) => (prevId === id ? null : id));
+  };
+
+  // function for editing post
+  const handleEditPost = () => {};
+
+  // functions for deleting post
+  const handleDeletePost = () => {};
+
   return (
     <div className="w-[100%] flex flex-col items-center">
       {/* Top container, Tagging UI, Image Preview Section, Displaying tags, Icons */}
@@ -268,10 +280,12 @@ const NewsFeedSection = () => {
           <div className="flex items-center bg-[#242424] p-2 pl-4 pr-4 rounded-xl cursor-pointer hover:bg-[#1e1e1e] relative">
             <span className="material-icons text-[#20D997] mr-2">photo</span>
             <p className="text-white">Gallery</p>
+
+            {/* Input Field for Image Upload */}
             <input
               type="file"
               accept="image/*"
-              className="absolute inset-0 opacity-0 pointer-events-none"
+              className="absolute inset-0 opacity-0 cursor-pointer"
               onChange={handleImageUpload}
             />
           </div>
@@ -335,18 +349,41 @@ const NewsFeedSection = () => {
                     </div>
                   </div>
 
-                  <div className="flex flex-col items-end">
-                    {/* Three Horizontal Dots Icon */}
-                    <button className="bg-[#2A2A2A] p-0 text-gray-400 hover:text-gray-600">
+                  {/* menu button and date/time */}
+                  <div className="relative flex flex-col items-end">
+                    {/* menu icon */}
+                    <button
+                      onClick={() => toggleMenu(index)}
+                      className="bg-[#2A2A2A] p-0 text-gray-400 hover:text-gray-600"
+                    >
                       <span className="material-icons text-2xl">
                         more_horiz
                       </span>
                     </button>
 
                     {/* Date and Time */}
-                    <div className="text-gray-500 text-sm mt-2">
+                    <div className="text-gray-500 text-sm">
                       {post.formattedDate}
                     </div>
+
+                    {/* Menu */}
+                    {openMenuId === index && (
+                      <div className="absolute top-7 right-0 bg-[#1e1e1e] rounded-xl shadow-lg w-32">
+                        <button
+                          onClick={handleEditPost}
+                          className="block w-full text-left px-4 py-2 text-white hover:bg-[#1e1e1e]"
+                        >
+                          Edit post
+                        </button>
+
+                        <button
+                          onClick={handleDeletePost}
+                          className="block w-full text-left px-4 py-2 text-red-500 hover:bg-[#1e1e1e]"
+                        >
+                          Delete post
+                        </button>
+                      </div>
+                    )}
                   </div>
                 </div>
 
