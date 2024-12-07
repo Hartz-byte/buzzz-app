@@ -104,6 +104,12 @@ const AllUsersSection = () => {
             key={user.id}
             className="flex items-center bg-[#242424] p-2 pl-4 pr-4 rounded-xl cursor-pointer hover:bg-[#1e1e1e] w-[90%]"
           >
+            <img
+              src={user.profilePicture}
+              alt="Profile"
+              className="w-10 h-10 object-cover rounded-full mr-4"
+            />
+
             <div className="flex flex-col justify-between flex-grow">
               <p className="text-white text-sm">{user.name}</p>
               <p className="text-gray-400 text-xs">@{user.username}</p>
@@ -115,14 +121,14 @@ const AllUsersSection = () => {
                   onClick={() => handleUnfollow(user.id)}
                   className="bg-red-500 text-white py-1 px-4 rounded-full"
                 >
-                  Unfollow
+                  <span className="material-icons">person_remove</span>
                 </button>
               ) : (
                 <button
                   onClick={() => handleFollow(user.id)}
-                  className="bg-blue-500 text-white py-1 px-7 rounded-full"
+                  className="bg-blue-500 text-white py-1 px-4 rounded-full"
                 >
-                  Follow
+                  <span className="material-icons">person_add</span>
                 </button>
               )}
             </div>

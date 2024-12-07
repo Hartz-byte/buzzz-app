@@ -198,7 +198,9 @@ const Signup: React.FC = () => {
               className="absolute right-2 top-10 cursor-pointer text-white"
               onClick={() => setIsPasswordVisible(!isPasswordVisible)}
             >
-              {isPasswordVisible ? "🔓" : "🔒"}
+              <span className="material-icons">
+                {isPasswordVisible ? "visibility" : "visibility_off"}
+              </span>
             </span>
           </div>
 

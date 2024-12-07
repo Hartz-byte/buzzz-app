@@ -335,8 +335,18 @@ const NewsFeedSection = () => {
                     </div>
                   </div>
 
-                  <div className="text-gray-500 text-sm mt-2">
-                    {post.formattedDate}
+                  <div className="flex flex-col items-end">
+                    {/* Three Horizontal Dots Icon */}
+                    <button className="bg-[#2A2A2A] p-0 text-gray-400 hover:text-gray-600">
+                      <span className="material-icons text-2xl">
+                        more_horiz
+                      </span>
+                    </button>
+
+                    {/* Date and Time */}
+                    <div className="text-gray-500 text-sm mt-2">
+                      {post.formattedDate}
+                    </div>
                   </div>
                 </div>
 
