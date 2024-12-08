@@ -10,6 +10,7 @@ import {
   CREATE_POST,
   SEARCH_USERS,
   GET_CURRENT_USER_DETAIL,
+  DELETE_POST_MUTATION,
 } from "../graphql/graphql.ts";
 import ProfilePic from "../assets/images/ProfilePic.jpg";
 
@@ -27,6 +28,8 @@ const NewsFeedSection = () => {
   const [tags, setTags] = useState<string[]>([]);
   const [tagSearch, setTagSearch] = useState<string>("");
   const [loading, setLoading] = useState<boolean>(false);
+  const [postIdToDelete, setPostIdToDelete] = useState<string | null>(null);
+  const [deleteDialog, setDeleteDialog] = useState(false);
   const [openMenuId, setOpenMenuId] = useState<number | null>(null);
 
   const { userId: authUserId } = useAuth();
@@ -42,6 +45,7 @@ const NewsFeedSection = () => {
   });
 
   const [createPostMutation] = useMutation(CREATE_POST);
+  const [deletePost] = useMutation(DELETE_POST_MUTATION);
 
   const [searchUsers, { data: searchResults, loading: searchLoading }] =
     useLazyQuery(SEARCH_USERS);
@@ -77,7 +81,6 @@ const NewsFeedSection = () => {
   useEffect(() => {
     if (postsData) {
       setPosts(postsData.posts);
-      console.log(postsData);
 
       // Format the createdAt field for each post excluding seconds
       const formattedPosts: Post[] = postsData.posts.map((post: Post) => ({
@@ -181,8 +184,28 @@ const NewsFeedSection = () => {
   // function for editing post
   const handleEditPost = () => {};
 
-  // functions for deleting post
-  const handleDeletePost = () => {};
+  // function for deleting post
+  const handleDeletePost = async (postId: string) => {
+    if (!postId) {
+      console.error("No post ID to delete");
+      return;
+    }
+
+    try {
+      await deletePost({ variables: { postId } });
+      console.log("Post deleted successfully");
+      setDeleteDialog(false);
+    } catch (err) {
+      console.error("Error deleting post:", err);
+    }
+  };
+
+  const openDeleteDialog = (postId: string, id: number) => {
+    console.log("id: ", postId);
+    setPostIdToDelete(postId);
+    setDeleteDialog(true);
+    setOpenMenuId((prevId) => (prevId === id ? null : id));
+  };
 
   return (
     <div className="w-[100%] flex flex-col items-center">
@@ -326,11 +349,13 @@ const NewsFeedSection = () => {
             .reverse()
             .map((post, index) => (
               <div
-                key={index}
+                key={post._id?.toString() || index}
+                id={post._id?.toString() || `post-${index}`}
                 className="bg-[#2a2a2a] p-4 mb-10 rounded-xl flex flex-col space-y-3"
               >
                 {/* user's info */}
                 <div className="flex justify-between space-x-2">
+                  {/* info */}
                   <div className="flex items-center">
                     <img
                       src={post.user.profilePicture}
@@ -377,7 +402,7 @@ const NewsFeedSection = () => {
                         </button>
 
                         <button
-                          onClick={handleDeletePost}
+                          onClick={() => openDeleteDialog(post.id, index)}
                           className="block w-full text-left px-4 py-2 text-red-500 hover:bg-[#1e1e1e]"
                         >
                           Delete post
@@ -433,6 +458,39 @@ const NewsFeedSection = () => {
                     </span>
                   </button>
                 </div>
+
+                {/* delete dialog */}
+                {deleteDialog && postIdToDelete === post.id && (
+                  <>
+                    {/* Background Blur */}
+                    <div className="fixed inset-0 bg-black bg-opacity-50 backdrop-blur-md z-10" />
+
+                    {/* Dialog Box */}
+                    <div className="fixed top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 bg-[#1A1A1A] p-6 rounded-md z-20 text-center w-[300px]">
+                      <p className="text-white mb-6 text-lg">
+                        Delete the post?
+                      </p>
+
+                      <div className="flex justify-around">
+                        <button
+                          onClick={() => {
+                            handleDeletePost(postIdToDelete!);
+                          }}
+                          className="bg-[#2A2A2A] text-white px-4 py-2 rounded-md hover:bg-[#3A3A3A] transition focus:outline-none"
+                        >
+                          Yes
+                        </button>
+
+                        <button
+                          onClick={() => setDeleteDialog(false)}
+                          className="bg-[#2A2A2A] text-white px-4 py-2 rounded-md hover:bg-[#3A3A3A] transition focus:outline-none"
+                        >
+                          No
+                        </button>
+                      </div>
+                    </div>
+                  </>
+                )}
               </div>
             ))
         )}

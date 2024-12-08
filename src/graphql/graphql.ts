@@ -118,6 +118,7 @@ export const GET_CURRENT_USER_DETAIL = gql`
 export const GET_USER_POSTS = gql`
   query GetUserPosts($userId: String!) {
     posts(userId: $userId) {
+      id
       text
       imageUrl
       createdAt
@@ -142,6 +143,13 @@ export const CREATE_POST = gql`
         name
       }
     }
+  }
+`;
+
+// GraphQL mutation to delete a post
+export const DELETE_POST_MUTATION = gql`
+  mutation DeletePost($postId: String!) {
+    deletePost(postId: $postId)
   }
 `;
 
