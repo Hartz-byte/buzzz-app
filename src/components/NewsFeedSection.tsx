@@ -262,7 +262,6 @@ const NewsFeedSection = () => {
         posts={posts}
         postsLoading={postsLoading}
         postsError={!!postsError}
-        handleEditPost={() => {}}
         handleDeletePost={handleDeletePost}
         toggleMenu={toggleMenu}
         openMenuId={openMenuId}

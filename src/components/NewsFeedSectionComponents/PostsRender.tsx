@@ -19,7 +19,6 @@ interface PostRenderProps {
   posts: Post[];
   postsLoading: boolean;
   postsError: boolean;
-  handleEditPost: () => void;
   handleDeletePost: (postId: string) => void;
   toggleMenu: (index: number) => void;
   openMenuId: number | null;
@@ -34,7 +33,6 @@ const PostRender: React.FC<PostRenderProps> = ({
   posts,
   postsLoading,
   postsError,
-  handleEditPost,
   handleDeletePost,
   toggleMenu,
   openMenuId,
@@ -101,10 +99,7 @@ const PostRender: React.FC<PostRenderProps> = ({
                   {/* Menu */}
                   {openMenuId === index && (
                     <div className="absolute top-7 right-0 bg-[#1e1e1e] rounded-xl shadow-lg w-32">
-                      <button
-                        onClick={handleEditPost}
-                        className="block w-full text-left px-4 py-2 text-white hover:bg-[#1e1e1e]"
-                      >
+                      <button className="block w-full text-left px-4 py-2 text-white hover:bg-[#1e1e1e]">
                         Edit post
                       </button>
 
