@@ -63,12 +63,12 @@ const AllUsersSection = () => {
   );
 
   // Utility function to get user name by userId
-  const getUserNameById = (userId: string) => {
-    const user = dataUsers.getAllUsers.find(
-      (user: { id: string }) => user.id === userId
-    );
-    return user ? user.name : "Unknown User";
-  };
+  // const getUserNameById = (userId: string) => {
+  //   const user = dataUsers.getAllUsers.find(
+  //     (user: { id: string }) => user.id === userId
+  //   );
+  //   return user ? user.name : "Unknown User";
+  // };
 
   // handle follow function
   const handleFollow = async (userId: string) => {
@@ -81,7 +81,7 @@ const AllUsersSection = () => {
         setFollowedUsers((prev) => new Set(prev).add(userId));
       }
 
-      const userName = getUserNameById(userId);
+      // const userName = getUserNameById(userId);
       // toast.success(`Following ${userName} now!!`, {
       //   position: "top-right",
       //   autoClose: 3000,
@@ -111,7 +111,7 @@ const AllUsersSection = () => {
         });
       }
 
-      const userName = getUserNameById(userId);
+      // const userName = getUserNameById(userId);
       // toast.info(`Unfollowing ${userName} now.`, {
       //   position: "top-right",
       //   autoClose: 3000,
