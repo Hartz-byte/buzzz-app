@@ -1,5 +1,8 @@
 import { useQuery, useMutation } from "@apollo/client";
 import { useState, useEffect } from "react";
+// import { toast, ToastContainer } from "react-toastify";
+// import "react-toastify/dist/ReactToastify.css";
+
 import {
   GET_ALL_USERS,
   GET_CURRENT_USER,
@@ -59,6 +62,14 @@ const AllUsersSection = () => {
     (user: { id: string }) => user.id !== dataCurrentUser.currentUser.id
   );
 
+  // Utility function to get user name by userId
+  const getUserNameById = (userId: string) => {
+    const user = dataUsers.getAllUsers.find(
+      (user: { id: string }) => user.id === userId
+    );
+    return user ? user.name : "Unknown User";
+  };
+
   // handle follow function
   const handleFollow = async (userId: string) => {
     try {
@@ -69,6 +80,17 @@ const AllUsersSection = () => {
       if (data?.followUser) {
         setFollowedUsers((prev) => new Set(prev).add(userId));
       }
+
+      const userName = getUserNameById(userId);
+      // toast.success(`Following ${userName} now!!`, {
+      //   position: "top-right",
+      //   autoClose: 3000,
+      //   hideProgressBar: true,
+      //   closeOnClick: true,
+      //   pauseOnHover: false,
+      //   draggable: true,
+      //   theme: "dark",
+      // });
     } catch (error) {
       console.error("Error following user", error);
     }
@@ -88,6 +110,17 @@ const AllUsersSection = () => {
           return newFollowedUsers;
         });
       }
+
+      const userName = getUserNameById(userId);
+      // toast.info(`Unfollowing ${userName} now.`, {
+      //   position: "top-right",
+      //   autoClose: 3000,
+      //   hideProgressBar: true,
+      //   closeOnClick: true,
+      //   pauseOnHover: false,
+      //   draggable: true,
+      //   theme: "dark",
+      // });
     } catch (error) {
       console.error("Error unfollowing user", error);
     }
@@ -138,6 +171,8 @@ const AllUsersSection = () => {
           </div>
         ))}
       </div>
+
+      {/* <ToastContainer /> */}
     </div>
   );
 };

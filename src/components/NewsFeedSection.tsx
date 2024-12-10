@@ -1,10 +1,13 @@
 import { useState, useEffect } from "react";
 import { useLazyQuery, useMutation, useQuery } from "@apollo/client";
-import { useAuth } from "../navigation/AuthContext";
 import axios from "axios";
 import { jwtDecode } from "jwt-decode";
 import { format } from "date-fns";
+import { toast, ToastContainer } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
+import { useAuth } from "../navigation/AuthContext";
+import ProfilePic from "../assets/images/ProfilePic.jpg";
 import {
   GET_USER_POSTS,
   CREATE_POST,
@@ -12,7 +15,6 @@ import {
   GET_CURRENT_USER_DETAIL,
   DELETE_POST_MUTATION,
 } from "../graphql/graphql.ts";
-import ProfilePic from "../assets/images/ProfilePic.jpg";
 
 type Post = {
   createdAt: string;
@@ -124,7 +126,15 @@ const NewsFeedSection = () => {
   // function to handle create post
   const handleCreatePost = async () => {
     if (!text.trim()) {
-      alert("Post cannot be empty.");
+      toast.error("Post text cannot be empty.", {
+        position: "top-right",
+        autoClose: 3000,
+        hideProgressBar: true,
+        closeOnClick: true,
+        pauseOnHover: false,
+        draggable: true,
+        theme: "dark",
+      });
       return;
     }
 
@@ -139,6 +149,16 @@ const NewsFeedSection = () => {
 
       await createPostMutation({
         variables: { text, imageUrl: uploadedImageUrl, tags },
+      });
+
+      toast.success("Posted!", {
+        position: "top-right",
+        autoClose: 3000,
+        hideProgressBar: true,
+        closeOnClick: true,
+        pauseOnHover: false,
+        draggable: true,
+        theme: "dark",
       });
 
       setText("");
@@ -186,22 +206,33 @@ const NewsFeedSection = () => {
 
   // function for deleting post
   const handleDeletePost = async (postId: string) => {
-    if (!postId) {
-      console.error("No post ID to delete");
-      return;
-    }
-
     try {
       await deletePost({ variables: { postId } });
-      console.log("Post deleted successfully");
+      toast.success("Post deleted successfully!", {
+        position: "top-right",
+        autoClose: 3000,
+        hideProgressBar: true,
+        closeOnClick: true,
+        pauseOnHover: false,
+        draggable: true,
+        theme: "dark",
+      });
       setDeleteDialog(false);
     } catch (err) {
-      console.error("Error deleting post:", err);
+      toast.error("You can only delete your own posts", {
+        position: "top-right",
+        autoClose: 3000,
+        hideProgressBar: true,
+        closeOnClick: true,
+        pauseOnHover: false,
+        draggable: true,
+        theme: "dark",
+      });
+      setDeleteDialog(false);
     }
   };
 
   const openDeleteDialog = (postId: string, id: number) => {
-    console.log("id: ", postId);
     setPostIdToDelete(postId);
     setDeleteDialog(true);
     setOpenMenuId((prevId) => (prevId === id ? null : id));
@@ -495,6 +526,8 @@ const NewsFeedSection = () => {
             ))
         )}
       </div>
+
+      <ToastContainer />
     </div>
   );
 };
