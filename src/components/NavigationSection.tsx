@@ -12,6 +12,7 @@ const NavigationSection = ({
 
   const [activeTab, setActiveTab] = useState("home");
   const [logoutDialog, setLogoutDialog] = useState(false);
+  const [hoveredTab, setHoveredTab] = useState<string | null>(null);
 
   // Function to handle log out
   const handleLogout = async () => {
@@ -31,20 +32,22 @@ const NavigationSection = ({
   };
 
   return (
-    <div className="h-[80px] flex items-center justify-between px-4">
+    <div className="h-[80px] flex items-center justify-between px-4 relative">
       {/* Logo */}
       <img src={Logo} alt="Buzzz Logo" className="h-full object-contain" />
 
       {/* Navigation Buttons */}
-      <div className="flex gap-8">
+      <div className="flex gap-8 relative">
         {/* Home Button */}
         <button
           onClick={() => handleTabChange("home")}
+          onMouseEnter={() => setHoveredTab("Home")}
+          onMouseLeave={() => setHoveredTab(null)}
           className={`${
             activeTab === "home"
               ? "text-[#B39757]"
               : "text-white hover:text-[#B39757]"
-          } focus:outline-none`}
+          } focus:outline-none relative`}
         >
           <span className="material-icons text-3xl">home</span>
         </button>
@@ -52,19 +55,32 @@ const NavigationSection = ({
         {/* Explore Button */}
         <button
           onClick={() => handleTabChange("explore")}
+          onMouseEnter={() => setHoveredTab("Explore")}
+          onMouseLeave={() => setHoveredTab(null)}
           className={`${
             activeTab === "explore"
               ? "text-[#B39757]"
               : "text-white hover:text-[#B39757]"
-          } focus:outline-none`}
+          } focus:outline-none relative`}
         >
           <span className="material-icons text-3xl">explore</span>
         </button>
 
         {/* Notifications Button */}
-        <button className="text-white hover:text-[#B39757] focus:outline-none">
+        <button
+          onMouseEnter={() => setHoveredTab("Notifications")}
+          onMouseLeave={() => setHoveredTab(null)}
+          className="text-white hover:text-[#B39757] focus:outline-none relative"
+        >
           <span className="material-icons text-3xl">notifications</span>
         </button>
+
+        {/* Tooltip */}
+        {hoveredTab && (
+          <div className="absolute bottom-[60px] left-1/2 transform -translate-x-1/2 bg-black text-white text-sm py-1 px-3 rounded-md shadow-lg z-10">
+            {hoveredTab}
+          </div>
+        )}
       </div>
 
       {/* Logout Button */}
